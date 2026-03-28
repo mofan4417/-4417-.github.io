@@ -7,37 +7,65 @@ import { Heart, Clock, MapPin, Quote, ChevronRight } from 'lucide-react';
 const ServiceResults = () => {
   const [stats, setStats] = useState<any>({ total_served: 156, total_hours: 2340, total_villages: 12 });
   const [loading, setLoading] = useState(true);
+  const [cases, setCases] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const defaultCases = [
+      {
+        title: '从沉默到开朗：小明的蜕变',
+        type: '儿童陪伴',
+        before: '父母常年在外打工，小明性格孤僻，不愿与人交流，成绩下滑严重。',
+        after: '志愿者每周通过视频进行情感陪伴和功课辅导。现在小明变得活泼自信，期末考试进入班级前十。',
+        image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop'
+      },
+      {
+        title: '王奶奶学会了“视频通话”',
+        type: '老人助老',
+        before: '独居老人王奶奶不会使用智能手机，只能通过座机与子女简单通话。',
+        after: '志愿者耐心地教会了王奶奶使用微信视频。现在王奶奶每天都能看到远在广东工作的孙子。',
+        image: 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=2070&auto=format&fit=crop'
+      }
+    ];
+
+    const parseCases = (raw: unknown) => {
+      if (typeof raw !== 'string' || !raw.trim()) return defaultCases;
       try {
-        const data = await api.getStats();
-        setStats(data);
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return defaultCases;
+        const list = parsed
+          .filter((x) => x && typeof x === 'object')
+          .map((x: any) => ({
+            title: typeof x.title === 'string' ? x.title : '',
+            type: typeof x.type === 'string' ? x.type : '',
+            before: typeof x.before === 'string' ? x.before : '',
+            after: typeof x.after === 'string' ? x.after : '',
+            image: typeof x.image === 'string' ? x.image : '',
+          }))
+          .filter((x) => x.title);
+        return list.length > 0 ? list : defaultCases;
+      } catch {
+        return defaultCases;
+      }
+    };
+
+    const fetchData = async () => {
+      try {
+        const [statsData, content] = await Promise.all([
+          api.getStats(),
+          api.getSiteContent().catch(() => ({})),
+        ]);
+        setStats(statsData);
+        setCases(parseCases((content as any)?.service_cases));
       } catch (err) {
         console.error('Failed to fetch stats:', err);
+        setCases(defaultCases);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
-  }, []);
 
-  const cases = [
-    {
-      title: '从沉默到开朗：小明的蜕变',
-      type: '儿童陪伴',
-      before: '父母常年在外打工，小明性格孤僻，不愿与人交流，成绩下滑严重。',
-      after: '志愿者每周通过视频进行情感陪伴和功课辅导。现在小明变得活泼自信，期末考试进入班级前十。',
-      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop'
-    },
-    {
-      title: '王奶奶学会了“视频通话”',
-      type: '老人助老',
-      before: '独居老人王奶奶不会使用智能手机，只能通过座机与子女简单通话。',
-      after: '志愿者耐心地教会了王奶奶使用微信视频。现在王奶奶每天都能看到远在广东工作的孙子。',
-      image: 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=2070&auto=format&fit=crop'
-    }
-  ];
+    fetchData();
+  }, []);
 
   const testimonials = [
     {

@@ -41,20 +41,22 @@ const AdminDashboard = () => {
     hero_quote_2: '',
     hero_author_2: '',
     page_views_offset: 0,
+    service_cases: [] as { title: string; type: string; before: string; after: string; image: string }[],
     home_photos: [] as string[],
     home_photos_display_count: 0
   });
   const [newHomePhotoUrl, setNewHomePhotoUrl] = useState('');
   const [newHeroImageUrl, setNewHeroImageUrl] = useState('');
+  const [newCase, setNewCase] = useState({ title: '', type: '', before: '', after: '', image: '' });
 
   const maxHomePhotos = 20;
   const maxHeroImages = 10;
 
   const recommendedHeroImages = [
-    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+warm+and+hopeful+scene+of+university+volunteers+visiting+left-behind+children+and+elderly+in+rural+China%2C+soft+sunlight%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+kind+volunteer+helping+an+elderly+person+use+a+smartphone%2C+rural+home%2C+warm+tones%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+volunteer+tutoring+a+left-behind+child+after+school+in+a+rural+village%2C+warm+lighting%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Volunteers+recording+service+notes+and+sharing+smiles+with+left-behind+children+in+a+cozy+rural+community+room%2C+warm+cinematic+lighting%2C+high+quality&image_size=landscape_16_9",
+    "https://source.unsplash.com/1600x900/?volunteer,elderly",
+    "https://source.unsplash.com/1600x900/?volunteer,child",
+    "https://source.unsplash.com/1600x900/?rural,china,volunteer",
+    "https://source.unsplash.com/1600x900/?community,helping",
   ];
 
   const parseJsonStringArray = (raw: any) => {
@@ -67,6 +69,32 @@ const AdminDashboard = () => {
       return [];
     }
   };
+
+  const parseJson = (raw: any) => {
+    if (typeof raw !== 'string' || !raw.trim()) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const defaultServiceCases = [
+    {
+      title: '从沉默到开朗：小明的蜕变',
+      type: '儿童陪伴',
+      before: '父母常年在外打工，小明性格孤僻，不愿与人交流，成绩下滑严重。',
+      after: '志愿者每周通过视频进行情感陪伴和功课辅导。现在小明变得活泼自信，期末考试进入班级前十。',
+      image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop'
+    },
+    {
+      title: '王奶奶学会了“视频通话”',
+      type: '老人助老',
+      before: '独居老人王奶奶不会使用智能手机，只能通过座机与子女简单通话。',
+      after: '志愿者耐心地教会了王奶奶使用微信视频。现在王奶奶每天都能看到远在广东工作的孙子。',
+      image: 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?q=80&w=2070&auto=format&fit=crop'
+    }
+  ];
 
   const getHomePhotosFromContent = (content: any) => {
     const raw = content?.home_photos;
@@ -97,6 +125,24 @@ const AdminDashboard = () => {
     if (list.length > 0) return list.slice(0, maxHeroImages);
     const one = typeof content?.hero_image === 'string' ? content.hero_image.trim() : '';
     return one ? [one] : [];
+  };
+
+  const getServiceCasesFromContent = (content: any) => {
+    const parsed = parseJson(content?.service_cases);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .filter((x) => x && typeof x === 'object')
+        .map((x: any) => ({
+          title: typeof x.title === 'string' ? x.title : '',
+          type: typeof x.type === 'string' ? x.type : '',
+          before: typeof x.before === 'string' ? x.before : '',
+          after: typeof x.after === 'string' ? x.after : '',
+          image: typeof x.image === 'string' ? x.image : '',
+        }))
+        .filter((x) => x.title.trim())
+        .slice(0, 20);
+    }
+    return defaultServiceCases;
   };
 
   const fetchData = async () => {
@@ -133,6 +179,7 @@ const AdminDashboard = () => {
       const heroImagesFromDb = getHeroImagesFromContent(content);
       const heroImages = heroImagesFromDb.length > 0 ? heroImagesFromDb : recommendedHeroImages.slice(0, maxHeroImages);
       const homePhotos = getHomePhotosFromContent(content);
+      const serviceCases = getServiceCasesFromContent(content);
       const displayCountRaw = Number(content?.home_photos_display_count);
       const displayCount = Number.isFinite(displayCountRaw) && displayCountRaw > 0
         ? Math.min(displayCountRaw, Math.max(homePhotos.length, 1))
@@ -150,6 +197,7 @@ const AdminDashboard = () => {
         hero_quote_2: content.hero_quote_2 || '',
         hero_author_2: content.hero_author_2 || '',
         page_views_offset: Number(content?.page_views_offset) || 0,
+        service_cases: serviceCases,
         home_photos: homePhotos,
         home_photos_display_count: displayCount
       });
@@ -196,6 +244,17 @@ const AdminDashboard = () => {
       );
       const pageViewsOffsetRaw = Number(settingsForm.page_views_offset);
       const pageViewsOffset = Number.isFinite(pageViewsOffsetRaw) ? Math.floor(pageViewsOffsetRaw) : 0;
+      const serviceCases = (settingsForm.service_cases || [])
+        .filter((x) => x && typeof x === 'object')
+        .map((x: any) => ({
+          title: typeof x.title === 'string' ? x.title.trim() : '',
+          type: typeof x.type === 'string' ? x.type.trim() : '',
+          before: typeof x.before === 'string' ? x.before.trim() : '',
+          after: typeof x.after === 'string' ? x.after.trim() : '',
+          image: typeof x.image === 'string' ? x.image.trim() : '',
+        }))
+        .filter((x) => x.title)
+        .slice(0, 20);
 
       await Promise.all([
         api.updateGlobalStats({
@@ -211,6 +270,7 @@ const AdminDashboard = () => {
         api.updateSiteContent('hero_quote_2', settingsForm.hero_quote_2 || ''),
         api.updateSiteContent('hero_author_2', settingsForm.hero_author_2 || ''),
         api.updateSiteContent('page_views_offset', String(pageViewsOffset)),
+        api.updateSiteContent('service_cases', JSON.stringify(serviceCases)),
         api.updateSiteContent('home_photos', JSON.stringify(homePhotos)),
         api.updateSiteContent('home_photos_display_count', String(displayCount)),
         api.updateSiteContent('service_photo_1', homePhotos[0] || ''),
@@ -1216,6 +1276,233 @@ const AdminDashboard = () => {
                     当前展示：{(stats?.page_views || 0) + (Number(settingsForm.page_views_offset) || 0)}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-sm space-y-8">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <ClipboardList className="w-6 h-6 text-volunteer-peach" />
+                服务成果 - 成功案例管理
+              </h2>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">标题</label>
+                  <input
+                    type="text"
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                    value={newCase.title}
+                    onChange={(e) => setNewCase({ ...newCase, title: e.target.value })}
+                    placeholder="例如：从沉默到开朗：小明的蜕变"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">标签</label>
+                  <input
+                    type="text"
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                    value={newCase.type}
+                    onChange={(e) => setNewCase({ ...newCase, type: e.target.value })}
+                    placeholder="例如：儿童陪伴 / 老人助老"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">服务前</label>
+                  <textarea
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all min-h-[110px]"
+                    value={newCase.before}
+                    onChange={(e) => setNewCase({ ...newCase, before: e.target.value })}
+                    placeholder="服务前情况描述"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">服务后</label>
+                  <textarea
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all min-h-[110px]"
+                    value={newCase.after}
+                    onChange={(e) => setNewCase({ ...newCase, after: e.target.value })}
+                    placeholder="服务后变化描述"
+                  />
+                </div>
+                <div className="lg:col-span-2 space-y-3">
+                  <label className="text-[10px] font-bold opacity-40 uppercase tracking-widest">配图 URL</label>
+                  <input
+                    type="text"
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                    value={newCase.image}
+                    onChange={(e) => setNewCase({ ...newCase, image: e.target.value })}
+                    placeholder="建议填稳定图片链接（可用图床/Unsplash/Wikimedia）"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <button
+                  type="button"
+                  className="bg-white/10 hover:bg-white/20 text-[#F3DDE4] font-bold px-8 py-4 rounded-2xl transition-all border border-white/10 active:scale-95"
+                  onClick={() => {
+                    const item = {
+                      title: newCase.title.trim(),
+                      type: newCase.type.trim(),
+                      before: newCase.before.trim(),
+                      after: newCase.after.trim(),
+                      image: newCase.image.trim(),
+                    };
+                    if (!item.title) {
+                      alert('请先填写标题');
+                      return;
+                    }
+                    setSettingsForm((prev) => ({
+                      ...prev,
+                      service_cases: [...(prev.service_cases || []), item].slice(0, 20),
+                    }));
+                    setNewCase({ title: '', type: '', before: '', after: '', image: '' });
+                  }}
+                >
+                  添加案例
+                </button>
+                <button
+                  type="button"
+                  className="bg-white/10 hover:bg-white/20 text-[#F3DDE4] font-bold px-8 py-4 rounded-2xl transition-all border border-white/10 active:scale-95"
+                  onClick={() => {
+                    setSettingsForm((prev) => ({ ...prev, service_cases: defaultServiceCases }));
+                  }}
+                >
+                  恢复默认案例
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {settingsForm.service_cases.length > 0 ? (
+                  settingsForm.service_cases.map((c, idx) => (
+                    <div key={`${idx}-${c.title}`} className="p-6 bg-[#1A0707] rounded-3xl border border-white/10 space-y-4">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="text-lg font-bold text-[#F3DDE4]">{c.title}</div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            className="p-2 bg-white/5 text-[#F3DDE4]/60 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                            onClick={() => {
+                              setSettingsForm((prev) => {
+                                if (idx === 0) return prev;
+                                const next = [...prev.service_cases];
+                                const temp = next[idx - 1];
+                                next[idx - 1] = next[idx];
+                                next[idx] = temp;
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                            disabled={idx === 0}
+                          >
+                            上移
+                          </button>
+                          <button
+                            type="button"
+                            className="p-2 bg-white/5 text-[#F3DDE4]/60 rounded-lg hover:bg-white/10 hover:text-white transition-all"
+                            onClick={() => {
+                              setSettingsForm((prev) => {
+                                if (idx >= prev.service_cases.length - 1) return prev;
+                                const next = [...prev.service_cases];
+                                const temp = next[idx + 1];
+                                next[idx + 1] = next[idx];
+                                next[idx] = temp;
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                            disabled={idx === settingsForm.service_cases.length - 1}
+                          >
+                            下移
+                          </button>
+                          <button
+                            type="button"
+                            className="p-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-all"
+                            onClick={() => {
+                              setSettingsForm((prev) => ({
+                                ...prev,
+                                service_cases: prev.service_cases.filter((_, i) => i !== idx),
+                              }));
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold opacity-40 uppercase tracking-widest">标签</div>
+                          <input
+                            type="text"
+                            className="w-full bg-black/20 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                            value={c.type}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setSettingsForm((prev) => {
+                                const next = [...prev.service_cases];
+                                next[idx] = { ...next[idx], type: v };
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold opacity-40 uppercase tracking-widest">配图 URL</div>
+                          <input
+                            type="text"
+                            className="w-full bg-black/20 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                            value={c.image}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setSettingsForm((prev) => {
+                                const next = [...prev.service_cases];
+                                next[idx] = { ...next[idx], image: v };
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold opacity-40 uppercase tracking-widest">服务前</div>
+                          <textarea
+                            className="w-full bg-black/20 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all min-h-[110px]"
+                            value={c.before}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setSettingsForm((prev) => {
+                                const next = [...prev.service_cases];
+                                next[idx] = { ...next[idx], before: v };
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="text-xs font-bold opacity-40 uppercase tracking-widest">服务后</div>
+                          <textarea
+                            className="w-full bg-black/20 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all min-h-[110px]"
+                            value={c.after}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setSettingsForm((prev) => {
+                                const next = [...prev.service_cases];
+                                next[idx] = { ...next[idx], after: v };
+                                return { ...prev, service_cases: next };
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 rounded-3xl border border-white/10 bg-white/5 text-center text-white/30 text-sm">
+                    还没有成功案例，先添加一个
+                  </div>
+                )}
+              </div>
+
+              <div className="text-xs text-white/40">
+                提示：修改完这里的内容后，记得点击页面最下方“保存全站全局设置”
               </div>
             </div>
 

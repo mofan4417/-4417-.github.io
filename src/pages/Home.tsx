@@ -29,10 +29,10 @@ const Home = () => {
     const one = typeof content.hero_image === 'string' ? content.hero_image.trim() : '';
     if (one) return [one];
     return [
-      "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+warm+and+hopeful+scene+of+university+volunteers+visiting+left-behind+children+and+elderly+in+rural+China%2C+soft+sunlight%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-      "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+kind+volunteer+helping+an+elderly+person+use+a+smartphone%2C+rural+home%2C+warm+tones%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-      "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+volunteer+tutoring+a+left-behind+child+after+school+in+a+rural+village%2C+warm+lighting%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
-      "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Volunteers+recording+service+notes+and+sharing+smiles+with+left-behind+children+in+a+cozy+rural+community+room%2C+warm+cinematic+lighting%2C+high+quality&image_size=landscape_16_9",
+      "https://source.unsplash.com/1600x900/?volunteer,elderly",
+      "https://source.unsplash.com/1600x900/?volunteer,child",
+      "https://source.unsplash.com/1600x900/?rural,china,volunteer",
+      "https://source.unsplash.com/1600x900/?community,helping",
     ];
   })();
 
