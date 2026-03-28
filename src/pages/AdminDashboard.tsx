@@ -60,7 +60,14 @@ const AdminDashboard = () => {
     members: [] as any[]
   });
 
+  const [testimonialsForm, setTestimonialsForm] = useState({
+    title: '志愿者感言',
+    subtitle: '这是一场跨越代际的双向奔赴',
+    list: [] as any[]
+  });
+
   const [newTeamMember, setNewTeamMember] = useState({ name: '', role: '', desc: '', image: '' });
+  const [newTestimonial, setNewTestimonial] = useState({ name: '', major: '', content: '' });
   const [newWhatWeDoCard, setNewWhatWeDoCard] = useState({ title: '', items: [] as any[] });
   const [newCardItem, setNewCardItem] = useState({ label: '', desc: '' });
   const [newHomePhotoUrl, setNewHomePhotoUrl] = useState('');
@@ -233,6 +240,12 @@ const AdminDashboard = () => {
         subtitle: content.team_intro_subtitle || '来自宜宾学院的青年力量，用技术温暖乡村',
         members: parseJson(content.team_members) || []
       });
+
+      setTestimonialsForm({
+        title: content.testimonials_title || '志愿者感言',
+        subtitle: content.testimonials_subtitle || '这是一场跨越代际的双向奔赴',
+        list: parseJson(content.volunteer_testimonials) || []
+      });
     } catch (err) {
       console.error('Critical error in dashboard:', err);
     } finally {
@@ -349,7 +362,10 @@ const AdminDashboard = () => {
         api.updateSiteContent('what_we_do_cards', JSON.stringify(whatWeDoForm.cards)),
         api.updateSiteContent('team_intro_title', teamForm.title),
         api.updateSiteContent('team_intro_subtitle', teamForm.subtitle),
-        api.updateSiteContent('team_members', JSON.stringify(teamForm.members))
+        api.updateSiteContent('team_members', JSON.stringify(teamForm.members)),
+        api.updateSiteContent('testimonials_title', testimonialsForm.title),
+        api.updateSiteContent('testimonials_subtitle', testimonialsForm.subtitle),
+        api.updateSiteContent('volunteer_testimonials', JSON.stringify(testimonialsForm.list))
       ]);
       alert('内容已成功保存！');
       fetchData();
@@ -1588,6 +1604,132 @@ const AdminDashboard = () => {
 
               <div className="text-xs text-white/40">
                 提示：修改完这里的内容后，记得点击页面最下方“保存全站全局设置”
+              </div>
+            </div>
+
+            {/* Volunteer Testimonials Section */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-sm space-y-8">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <Heart className="w-6 h-6 text-volunteer-peach" />
+                “志愿者感言” 管理
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">板块标题</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={testimonialsForm.title}
+                      onChange={(e) => setTestimonialsForm({ ...testimonialsForm, title: e.target.value })}
+                      placeholder="例如：志愿者感言"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">板块副标题</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={testimonialsForm.subtitle}
+                      onChange={(e) => setTestimonialsForm({ ...testimonialsForm, subtitle: e.target.value })}
+                      placeholder="例如：这是一场跨越代际的双向奔赴"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {testimonialsForm.list.map((item, idx) => (
+                    <div key={idx} className="p-8 bg-[#1A0707] rounded-[32px] border border-white/10 space-y-6 relative group">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newList = testimonialsForm.list.filter((_, i) => i !== idx);
+                          setTestimonialsForm({ ...testimonialsForm, list: newList });
+                        }}
+                        className="absolute top-6 right-6 p-2 bg-red-500/10 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      
+                      <textarea
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-[#F3DDE4]/80 outline-none min-h-[120px] italic"
+                        value={item.content}
+                        onChange={(e) => {
+                          const newList = [...testimonialsForm.list];
+                          newList[idx].content = e.target.value;
+                          setTestimonialsForm({ ...testimonialsForm, list: newList });
+                        }}
+                        placeholder="感言内容..."
+                      />
+                      
+                      <div className="flex gap-4">
+                        <input
+                          type="text"
+                          className="flex-1 bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm font-bold text-[#F9D8C6] outline-none"
+                          value={item.name}
+                          onChange={(e) => {
+                            const newList = [...testimonialsForm.list];
+                            newList[idx].name = e.target.value;
+                            setTestimonialsForm({ ...testimonialsForm, list: newList });
+                          }}
+                          placeholder="志愿者姓名"
+                        />
+                        <input
+                          type="text"
+                          className="flex-1 bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-xs font-medium text-white/40 outline-none"
+                          value={item.major}
+                          onChange={(e) => {
+                            const newList = [...testimonialsForm.list];
+                            newList[idx].major = e.target.value;
+                            setTestimonialsForm({ ...testimonialsForm, list: newList });
+                          }}
+                          placeholder="专业 / 身份"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Add New Testimonial Form */}
+                  <div className="p-8 bg-white/5 rounded-[32px] border-2 border-dashed border-white/10 space-y-4">
+                    <h4 className="text-sm font-bold text-white/40 flex items-center gap-2">
+                      <Plus className="w-4 h-4" /> 添加新感言
+                    </h4>
+                    <textarea
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-2xl py-4 px-6 text-sm focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50 min-h-[100px]"
+                      value={newTestimonial.content}
+                      onChange={(e) => setNewTestimonial({ ...newTestimonial, content: e.target.value })}
+                      placeholder="感言内容..."
+                    />
+                    <div className="flex gap-4">
+                      <input
+                        type="text"
+                        className="flex-1 bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50"
+                        value={newTestimonial.name}
+                        onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
+                        placeholder="姓名"
+                      />
+                      <input
+                        type="text"
+                        className="flex-1 bg-[#1A0707] border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50"
+                        value={newTestimonial.major}
+                        onChange={(e) => setNewTestimonial({ ...newTestimonial, major: e.target.value })}
+                        placeholder="专业"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newTestimonial.content || !newTestimonial.name) return alert('请填写完整感言和姓名');
+                        setTestimonialsForm({ ...testimonialsForm, list: [...testimonialsForm.list, newTestimonial] });
+                        setNewTestimonial({ name: '', major: '', content: '' });
+                      }}
+                      className="w-full py-4 bg-[#F9D8C6] text-[#2B0B0B] rounded-2xl font-bold text-sm hover:bg-white transition-all"
+                    >
+                      确认添加感言
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 

@@ -102,6 +102,17 @@ const Home = () => {
     return Math.max(0, base + pageViewsOffset);
   })();
 
+  const testimonials = (() => {
+    const raw = content.volunteer_testimonials;
+    if (typeof raw === 'string' && raw.trim()) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return [];
+  })();
+
   useEffect(() => {
     const initHome = async () => {
       try {
@@ -284,8 +295,34 @@ const Home = () => {
             <div className="absolute inset-0 bg-[#2B0B0B]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <span className="text-[10px] font-bold text-white">加入</span>
             </div>
-          </button>
+          </button></div>
         </div>
+
+        {/* 志愿者感言精选 */}
+        {testimonials.length > 0 && (
+          <div className="max-w-7xl mx-auto mt-32 animate-slide-up">
+            <h3 className="text-3xl font-bold mb-12 flex items-center gap-4">
+              <div className="w-2 h-8 bg-[#F9D8C6] rounded-full"></div>
+              志愿者感言
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {testimonials.slice(0, 2).map((item: any, idx: number) => (
+                <div key={idx} className="bg-white/5 p-10 rounded-[40px] border border-white/10 hover:bg-white/10 transition-all relative group">
+                  <p className="text-xl italic opacity-70 leading-relaxed mb-8">“{item.content}”</p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-[#F9D8C6] text-[#2B0B0B] rounded-2xl flex items-center justify-center font-bold text-xl">
+                      {item.name[0]}
+                    </div>
+                    <div>
+                      <div className="font-bold">{item.name}</div>
+                      <div className="text-sm opacity-40">{item.major}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 浏览量统计 */}
         <div className="max-w-7xl mx-auto mt-16 text-right opacity-40 text-sm">

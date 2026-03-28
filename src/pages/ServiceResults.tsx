@@ -8,6 +8,7 @@ const ServiceResults = () => {
   const [stats, setStats] = useState<any>({ total_served: 156, total_hours: 2340, total_villages: 12 });
   const [loading, setLoading] = useState(true);
   const [cases, setCases] = useState<any[]>([]);
+  const [content, setContent] = useState<any>(null);
 
   useEffect(() => {
     const defaultCases = [
@@ -55,7 +56,8 @@ const ServiceResults = () => {
           api.getSiteContent().catch(() => ({})),
         ]);
         setStats(statsData);
-        setCases(parseCases((content as any)?.service_cases));
+        setCases(parseCases((contentData as any)?.service_cases));
+        setContent(contentData);
       } catch (err) {
         console.error('Failed to fetch stats:', err);
         setCases(defaultCases);
@@ -67,7 +69,16 @@ const ServiceResults = () => {
     fetchData();
   }, []);
 
-  const testimonials = [
+  const parseJson = (raw: any) => {
+    if (typeof raw !== 'string' || !raw.trim()) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const defaultTestimonials = [
     {
       name: '张同学',
       major: '教育学专业',
@@ -80,12 +91,23 @@ const ServiceResults = () => {
     }
   ];
 
-  const photos = [
-    'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?q=80&w=2070&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop',
-  ];
+  const testimonials = parseJson(content?.volunteer_testimonials) || defaultTestimonials;
+
+  const photos = (() => {
+    const raw = content?.home_photos;
+    if (typeof raw === 'string' && raw.trim()) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return [
+      'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop',
+    ];
+  })();
 
   return (
     <div className="min-h-screen bg-white text-[#333] font-sans">
