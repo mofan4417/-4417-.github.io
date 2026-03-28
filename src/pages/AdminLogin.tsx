@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, User, Lock, Eye, EyeOff } from 'lucide-react';
+import { api } from '../api';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -12,9 +13,15 @@ const AdminLogin = () => {
 
   useEffect(() => {
     // 如果已经登录，直接跳转到后台
-    if (localStorage.getItem('isAdminLoggedIn') === 'true') {
-      navigate('/admin/dashboard');
-    }
+    const check = async () => {
+      try {
+        const session = await api.getSession();
+        if (session) navigate('/admin/dashboard');
+      } catch {
+        // ignore
+      }
+    };
+    check();
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -22,15 +29,10 @@ const AdminLogin = () => {
     setLoading(true);
     setError('');
     try {
-      if (username === 'xiangzhuqiao' && password === 'xiangzhuqiao') {
-        localStorage.setItem('isAdminLoggedIn', 'true');
-        // 强制刷新一下以确保状态同步
-        window.location.href = '/admin/dashboard';
-      } else {
-        setError('账号或密码错误，请重试。');
-      }
-    } catch (err) {
-      setError('登录过程中出现错误。');
+      await api.login({ email, password });
+      window.location.href = '/admin/dashboard';
+    } catch {
+      setError('邮箱或密码错误，请重试。');
     } finally {
       setLoading(false);
     }
@@ -53,16 +55,16 @@ const AdminLogin = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <label className="text-xs font-bold text-[#F3DDE4]/50 uppercase tracking-widest flex items-center gap-2 px-1">
-                <User className="w-4 h-4" /> 账号
+                <User className="w-4 h-4" /> 邮箱
               </label>
               <input
                 required
-                type="text"
-                placeholder="请输入账号"
+                type="email"
+                placeholder="请输入邮箱"
                 className="w-full bg-[#1A0707] border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
-                value={username}
+                value={email}
                 onChange={(e) => {
-                  setUsername(e.target.value);
+                  setEmail(e.target.value);
                   setError('');
                 }}
               />

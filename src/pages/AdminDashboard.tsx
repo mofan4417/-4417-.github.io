@@ -12,7 +12,7 @@ import { ServiceObject } from './ServiceObjects';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'applications' | 'requests' | 'objects' | 'settings'>('applications');
+  const [activeTab, setActiveTab] = useState<'applications' | 'requests' | 'objects' | 'settings' | 'content'>('applications');
   const [applications, setApplications] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [objects, setObjects] = useState<ServiceObject[]>([]);
@@ -45,6 +45,24 @@ const AdminDashboard = () => {
     home_photos: [] as string[],
     home_photos_display_count: 0
   });
+
+  // Content Forms
+  const [whatWeDoForm, setWhatWeDoForm] = useState({
+    title: '',
+    subtitle: '',
+    bg_image: '',
+    cards: [] as any[]
+  });
+
+  const [teamForm, setTeamForm] = useState({
+    title: '',
+    subtitle: '',
+    members: [] as any[]
+  });
+
+  const [newTeamMember, setNewTeamMember] = useState({ name: '', role: '', desc: '', image: '' });
+  const [newWhatWeDoCard, setNewWhatWeDoCard] = useState({ title: '', items: [] as any[] });
+  const [newCardItem, setNewCardItem] = useState({ label: '', desc: '' });
   const [newHomePhotoUrl, setNewHomePhotoUrl] = useState('');
   const [newHeroImageUrl, setNewHeroImageUrl] = useState('');
   const [newCase, setNewCase] = useState({ title: '', type: '', before: '', after: '', image: '' });
@@ -201,6 +219,20 @@ const AdminDashboard = () => {
         home_photos: homePhotos,
         home_photos_display_count: displayCount
       });
+
+      // Update Content Forms
+      setWhatWeDoForm({
+        title: content.what_we_do_title || '',
+        subtitle: content.what_we_do_subtitle || '',
+        bg_image: content.what_we_do_bg_image || '',
+        cards: parseJson(content.what_we_do_cards) || []
+      });
+
+      setTeamForm({
+        title: content.team_intro_title || '我们的团队',
+        subtitle: content.team_intro_subtitle || '来自宜宾学院的青年力量，用技术温暖乡村',
+        members: parseJson(content.team_members) || []
+      });
     } catch (err) {
       console.error('Critical error in dashboard:', err);
     } finally {
@@ -209,12 +241,25 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    const isAdmin = localStorage.getItem('isAdminLoggedIn') === 'true';
-    if (!isAdmin) {
-      window.location.href = '/admin/login';
-      return;
-    }
-    fetchData();
+    const check = async () => {
+      try {
+        const session = await api.getSession();
+        if (!session) {
+          window.location.href = '/admin/login';
+          return;
+        }
+        const role = await api.getMyRole();
+        if (role !== 'admin' && role !== 'reviewer') {
+          alert('权限不足');
+          window.location.href = '/';
+          return;
+        }
+        fetchData();
+      } catch {
+        window.location.href = '/admin/login';
+      }
+    };
+    check();
   }, []);
 
   const readFileAsDataUrl = (file: File) => {
@@ -282,6 +327,29 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Failed to save settings:', err);
       alert('保存设置失败');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSavePageContent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      await Promise.all([
+        api.updateSiteContent('what_we_do_title', whatWeDoForm.title),
+        api.updateSiteContent('what_we_do_subtitle', whatWeDoForm.subtitle),
+        api.updateSiteContent('what_we_do_bg_image', whatWeDoForm.bg_image),
+        api.updateSiteContent('what_we_do_cards', JSON.stringify(whatWeDoForm.cards)),
+        api.updateSiteContent('team_intro_title', teamForm.title),
+        api.updateSiteContent('team_intro_subtitle', teamForm.subtitle),
+        api.updateSiteContent('team_members', JSON.stringify(teamForm.members))
+      ]);
+      alert('内容已成功保存！');
+      fetchData();
+    } catch (err) {
+      console.error('Failed to save content:', err);
+      alert('保存内容失败');
     } finally {
       setIsSaving(false);
     }
@@ -487,6 +555,14 @@ const AdminDashboard = () => {
           >
             <Settings className="w-6 h-6" /> 站点设置
           </button>
+          <button
+            onClick={() => setActiveTab('content')}
+            className={`flex items-center gap-4 px-6 py-5 rounded-2xl transition-all font-bold ${
+              activeTab === 'content' ? 'bg-[#F9D8C6] text-[#2B0B0B] shadow-xl' : 'text-[#F3DDE4]/40 hover:bg-white/5 hover:text-[#F3DDE4]'
+            }`}
+          >
+            <LayoutDashboard className="w-6 h-6" /> 内容编辑
+          </button>
         </nav>
 
         <div className="pt-8 border-t border-white/5 flex flex-col gap-4">
@@ -514,12 +590,14 @@ const AdminDashboard = () => {
               {activeTab === 'requests' && '新增对象申请列表'}
               {activeTab === 'objects' && '服务对象管理'}
               {activeTab === 'settings' && '站点全局设置'}
+              {activeTab === 'content' && '页面内容编辑'}
             </h1>
             <p className="text-lg text-[#F3DDE4]/40">
               {activeTab === 'applications' && `共有 ${applications.length} 名申请者，请及时审核并联系`}
               {activeTab === 'requests' && `共有 ${requests.length} 条对象申请，请审核后再公开展示`}
               {activeTab === 'objects' && `管理已录入的 ${objects.length} 位留守群体信息`}
               {activeTab === 'settings' && '自定义网页背景图、统计数据等核心内容'}
+              {activeTab === 'content' && '修改“我们做什么”、“我们的团队”等页面的文字和图片'}
             </p>
           </div>
 
@@ -1521,6 +1599,328 @@ const AdminDashboard = () => {
                   <>
                     <Save className="w-6 h-6" />
                     保存全站全局设置
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {activeTab === 'content' && (
+          <form onSubmit={handleSavePageContent} className="space-y-12 animate-fade-in">
+            {/* What We Do Section */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-sm space-y-8">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <LayoutDashboard className="w-6 h-6 text-volunteer-peach" />
+                “我们做什么” 页面管理
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">页面主标题</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={whatWeDoForm.title}
+                      onChange={(e) => setWhatWeDoForm({ ...whatWeDoForm, title: e.target.value })}
+                      placeholder="例如：让做好事变得更加容易"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">页面背景图 URL</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={whatWeDoForm.bg_image}
+                      onChange={(e) => setWhatWeDoForm({ ...whatWeDoForm, bg_image: e.target.value })}
+                      placeholder="请输入背景图片链接"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold opacity-40 uppercase tracking-widest">副标题 / 简介</label>
+                  <textarea
+                    className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all min-h-[100px]"
+                    value={whatWeDoForm.subtitle}
+                    onChange={(e) => setWhatWeDoForm({ ...whatWeDoForm, subtitle: e.target.value })}
+                    placeholder="请输入页面简要介绍"
+                  />
+                </div>
+
+                {/* Cards Editor */}
+                <div className="space-y-4">
+                  <label className="text-xs font-bold opacity-40 uppercase tracking-widest">服务内容卡片 (最多 2 个)</label>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {whatWeDoForm.cards.map((card, idx) => (
+                      <div key={idx} className="p-6 bg-[#1A0707] rounded-2xl border border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <input
+                            type="text"
+                            className="bg-transparent border-b border-white/10 focus:border-[#F9D8C6] outline-none font-bold text-lg"
+                            value={card.title}
+                            onChange={(e) => {
+                              const newCards = [...whatWeDoForm.cards];
+                              newCards[idx].title = e.target.value;
+                              setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newCards = whatWeDoForm.cards.filter((_, i) => i !== idx);
+                              setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                            }}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="space-y-3">
+                          {card.items.map((item: any, i: number) => (
+                            <div key={i} className="flex flex-col gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
+                              <div className="flex items-center justify-between gap-2">
+                                <input
+                                  type="text"
+                                  className="bg-transparent border-none outline-none text-sm font-bold text-[#F9D8C6] flex-1"
+                                  value={item.label}
+                                  onChange={(e) => {
+                                    const newCards = [...whatWeDoForm.cards];
+                                    newCards[idx].items[i].label = e.target.value;
+                                    setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newCards = [...whatWeDoForm.cards];
+                                    newCards[idx].items = newCards[idx].items.filter((_: any, ii: number) => ii !== i);
+                                    setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                                  }}
+                                  className="text-white/20 hover:text-red-400"
+                                >
+                                  <XCircle className="w-3 h-3" />
+                                </button>
+                              </div>
+                              <textarea
+                                className="bg-transparent border-none outline-none text-xs text-white/60 resize-none h-12"
+                                value={item.desc}
+                                onChange={(e) => {
+                                  const newCards = [...whatWeDoForm.cards];
+                                  newCards[idx].items[i].desc = e.target.value;
+                                  setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                                }}
+                              />
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newCards = [...whatWeDoForm.cards];
+                              newCards[idx].items.push({ label: '新服务', desc: '描述内容...' });
+                              setWhatWeDoForm({ ...whatWeDoForm, cards: newCards });
+                            }}
+                            className="w-full py-2 bg-white/5 rounded-xl text-xs font-bold text-white/40 hover:bg-white/10 hover:text-white transition-all border border-dashed border-white/10"
+                          >
+                            + 添加服务子项
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    {whatWeDoForm.cards.length < 2 && (
+                      <button
+                        type="button"
+                        onClick={() => setWhatWeDoForm({ ...whatWeDoForm, cards: [...whatWeDoForm.cards, { title: '新卡片', items: [] }] })}
+                        className="flex flex-col items-center justify-center p-10 bg-white/5 rounded-2xl border-2 border-dashed border-white/10 text-white/20 hover:text-[#F9D8C6] hover:border-[#F9D8C6]/30 transition-all"
+                      >
+                        <Plus className="w-8 h-8 mb-2" />
+                        <span className="font-bold">添加服务卡片</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Management Section */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-sm space-y-8">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <Users className="w-6 h-6 text-volunteer-peach" />
+                “我们的团队” 成员管理
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">板块标题</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={teamForm.title}
+                      onChange={(e) => setTeamForm({ ...teamForm, title: e.target.value })}
+                      placeholder="例如：我们的团队"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold opacity-40 uppercase tracking-widest">板块副标题</label>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-4 px-6 text-sm focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all"
+                      value={teamForm.subtitle}
+                      onChange={(e) => setTeamForm({ ...teamForm, subtitle: e.target.value })}
+                      placeholder="例如：来自宜宾学院的青年力量"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {teamForm.members.map((member, idx) => (
+                    <div key={idx} className="p-6 bg-[#1A0707] rounded-3xl border border-white/10 space-y-4 relative group">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newMembers = teamForm.members.filter((_, i) => i !== idx);
+                          setTeamForm({ ...teamForm, members: newMembers });
+                        }}
+                        className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <div className="w-20 h-20 bg-white/5 rounded-2xl overflow-hidden mb-4">
+                        {member.image ? (
+                          <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/20">
+                            <ImageIcon className="w-8 h-8" />
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-sm font-bold text-[#F9D8C6] outline-none"
+                        value={member.name}
+                        onChange={(e) => {
+                          const newMembers = [...teamForm.members];
+                          newMembers[idx].name = e.target.value;
+                          setTeamForm({ ...teamForm, members: newMembers });
+                        }}
+                        placeholder="姓名"
+                      />
+                      <input
+                        type="text"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-xs font-medium text-white/40 outline-none"
+                        value={member.role}
+                        onChange={(e) => {
+                          const newMembers = [...teamForm.members];
+                          newMembers[idx].role = e.target.value;
+                          setTeamForm({ ...teamForm, members: newMembers });
+                        }}
+                        placeholder="职位 / 角色"
+                      />
+                      <textarea
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-xs text-white/60 outline-none min-h-[80px]"
+                        value={member.desc}
+                        onChange={(e) => {
+                          const newMembers = [...teamForm.members];
+                          newMembers[idx].desc = e.target.value;
+                          setTeamForm({ ...teamForm, members: newMembers });
+                        }}
+                        placeholder="个人简介"
+                      />
+                      <input
+                        type="text"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-4 text-[10px] text-white/20 outline-none"
+                        value={member.image}
+                        onChange={(e) => {
+                          const newMembers = [...teamForm.members];
+                          newMembers[idx].image = e.target.value;
+                          setTeamForm({ ...teamForm, members: newMembers });
+                        }}
+                        placeholder="照片 URL"
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Add New Member Form */}
+                  <div className="p-6 bg-white/5 rounded-3xl border-2 border-dashed border-white/10 space-y-4">
+                    <h4 className="text-sm font-bold text-white/40 flex items-center gap-2">
+                      <Plus className="w-4 h-4" /> 添加新成员
+                    </h4>
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-2 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50"
+                      value={newTeamMember.name}
+                      onChange={(e) => setNewTeamMember({ ...newTeamMember, name: e.target.value })}
+                      placeholder="姓名"
+                    />
+                    <input
+                      type="text"
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-2 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50"
+                      value={newTeamMember.role}
+                      onChange={(e) => setNewTeamMember({ ...newTeamMember, role: e.target.value })}
+                      placeholder="职位 / 角色"
+                    />
+                    <textarea
+                      className="w-full bg-[#1A0707] border border-white/10 rounded-xl py-2 px-4 text-xs focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50 min-h-[60px]"
+                      value={newTeamMember.desc}
+                      onChange={(e) => setNewTeamMember({ ...newTeamMember, desc: e.target.value })}
+                      placeholder="简介"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 bg-[#1A0707] border border-white/10 rounded-xl py-2 px-4 text-xs focus:outline-none focus:ring-1 focus:ring-[#F9D8C6]/50"
+                        value={newTeamMember.image}
+                        onChange={(e) => setNewTeamMember({ ...newTeamMember, image: e.target.value })}
+                        placeholder="图片 URL"
+                      />
+                      <label className="p-2 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10">
+                        <Upload className="w-4 h-4 text-white/40" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const dataUrl = await readFileAsDataUrl(file);
+                              setNewTeamMember({ ...newTeamMember, image: dataUrl });
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newTeamMember.name) return alert('请填写姓名');
+                        setTeamForm({ ...teamForm, members: [...teamForm.members, newTeamMember] });
+                        setNewTeamMember({ name: '', role: '', desc: '', image: '' });
+                      }}
+                      className="w-full py-3 bg-[#F9D8C6] text-[#2B0B0B] rounded-xl font-bold text-sm hover:bg-white transition-all"
+                    >
+                      确认添加
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center pt-8">
+              <button
+                disabled={isSaving}
+                type="submit"
+                className="bg-[#F9D8C6] hover:bg-white text-[#2B0B0B] font-black px-24 py-6 rounded-2xl transition-all shadow-2xl shadow-black/20 flex items-center gap-4 text-xl disabled:opacity-50"
+              >
+                {isSaving ? (
+                  <>
+                    <RefreshCcw className="w-6 h-6 animate-spin" />
+                    正在保存内容...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-6 h-6" />
+                    保存页面内容修改
                   </>
                 )}
               </button>

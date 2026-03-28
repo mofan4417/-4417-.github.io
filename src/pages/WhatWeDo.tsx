@@ -1,80 +1,158 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Heart, BookOpen, Globe, Smartphone, Phone, Activity, Search, Link as LinkIcon, ClipboardCheck, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { api } from '../api';
 
 const WhatWeDo = () => {
+  const [content, setContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const data = await api.getSiteContent();
+        setContent(data);
+      } catch (err) {
+        console.error('Failed to fetch content:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
+
+  const parseJson = (raw: any) => {
+    if (typeof raw !== 'string' || !raw.trim()) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const defaultCards = [
+    {
+      title: '对留守儿童的服务',
+      icon: <Heart className="w-8 h-8 text-pink-500" />,
+      items: [
+        { label: '情感陪伴', desc: '每周至少一次视频聊天，倾听孩子的心声，给予情感支持', icon: <Phone className="w-5 h-5" /> },
+        { label: '学业辅导', desc: '针对数学、英语等薄弱学科进行远程辅导，激发学习兴趣', icon: <BookOpen className="w-5 h-5" /> },
+        { label: '视野拓展', desc: '分享大学生活与城市见闻，带孩子看更广阔的世界', icon: <Globe className="w-5 h-5" /> }
+      ]
+    },
+    {
+      title: '对留守老人的服务',
+      icon: <Activity className="w-8 h-8 text-blue-500" />,
+      items: [
+        { label: '数字助老', desc: '教老人使用微信、医保查询等数字工具，跨越数字鸿沟', icon: <Smartphone className="w-5 h-5" /> },
+        { label: '生活关怀', desc: '定期电话问候，了解生活困难，协助联系当地村委会解决', icon: <Heart className="w-5 h-5" /> },
+        { label: '健康提醒', desc: '提醒按时服药、监测血压，科普基础健康常识', icon: <Activity className="w-5 h-5" /> }
+      ]
+    }
+  ];
+
+  const cards = parseJson(content?.what_we_do_cards) || defaultCards;
+  const bgImage = content?.what_we_do_bg_image || "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop";
+
   return (
-    <div className="min-h-screen bg-[#F6A9B6] text-[#333] font-sans">
+    <div className="min-h-screen bg-[#FDF4F5] text-[#333] font-sans">
       <Navbar />
       
-      <div className="pt-24 pb-32 px-4 md:px-24 max-w-7xl mx-auto">
-        <div className="text-center mb-20 space-y-4">
-          <p className="text-lg opacity-60">我们做什么</p>
-          <h2 className="text-4xl md:text-5xl font-bold">让做好事变得更加容易</h2>
+      {/* Hero Section */}
+      <div className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={bgImage} 
+            alt="Background" 
+            className="w-full h-full object-cover brightness-[0.4]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FDF4F5]"></div>
+        </div>
+        <div className="relative z-10 text-center space-y-6 px-4">
+          <p className="text-white/80 text-lg md:text-xl font-medium tracking-widest uppercase">我们的使命</p>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight">
+            {content?.what_we_do_title || "用青春陪伴温暖乡村"}
+          </h1>
+          <p className="text-white/70 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
+            {content?.what_we_do_subtitle || "通过“线下调研+线上匹配+志愿者陪伴”的模式，为乡村留守群体提供精准、持续的情感支持与生活帮助。"}
+          </p>
+        </div>
+      </div>
+
+      <div className="pb-32 px-4 md:px-24 max-w-7xl mx-auto -mt-16 relative z-20">
+        {/* Core Services */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+          {cards.map((card: any, idx: number) => (
+            <div key={idx} className="bg-white rounded-[40px] p-10 md:p-12 shadow-2xl shadow-pink-200/50 border border-white/20 hover:scale-[1.02] transition-all duration-500 group">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-4 bg-pink-50 rounded-2xl group-hover:bg-pink-100 transition-colors">
+                  {card.icon || <Heart className="w-8 h-8 text-pink-500" />}
+                </div>
+                <h3 className="text-3xl font-black text-[#2B0B0B]">{card.title}</h3>
+              </div>
+              <div className="space-y-8">
+                {card.items.map((item: any, i: number) => (
+                  <div key={i} className="flex gap-5">
+                    <div className="mt-1 p-2 bg-gray-50 rounded-lg text-gray-400 group-hover:text-pink-500 group-hover:bg-pink-50 transition-all">
+                      {item.icon || <Sparkles className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-[#2B0B0B] mb-2">{item.label}</h4>
+                      <p className="text-gray-500 leading-relaxed text-lg">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="space-y-10 max-w-5xl mx-auto">
-          {/* Card 1 */}
-          <div className="bg-white rounded-[32px] p-12 shadow-xl border border-black/5 hover:scale-[1.01] transition-transform">
-            <h3 className="text-2xl font-bold mb-8">对留守儿童的服务</h3>
-            <ul className="space-y-6 text-xl opacity-80">
-              <li className="flex items-start gap-4">
-                <span className="font-bold">①</span>
-                <span>情感陪伴（每周视频聊天）</span>
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="font-bold">②</span>
-                <span>学业辅导（数学、英语等）</span>
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="font-bold">③</span>
-                <span>视野拓展（分享大学生活）</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Card 2 */}
-          <div className="bg-white rounded-[32px] p-12 shadow-xl border border-black/5 hover:scale-[1.01] transition-transform">
-            <h3 className="text-2xl font-bold mb-8">对留守老人的服务</h3>
-            <ul className="space-y-6 text-xl opacity-80">
-              <li className="flex items-start gap-4">
-                <span className="font-bold">①</span>
-                <span>数字助老（教用微信、医保）</span>
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="font-bold">②</span>
-                <span>生活关怀（定期电话问候）</span>
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="font-bold">③</span>
-                <span>健康提醒（提醒吃药、量血压）</span>
-              </li>
-              <li className="text-lg opacity-60 pt-4 border-t border-black/5">而积累。</li>
-            </ul>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-white rounded-[32px] p-12 shadow-xl border border-black/5 hover:scale-[1.01] transition-transform">
-            <h3 className="text-2xl font-bold mb-8">服务流程</h3>
-            <p className="text-xl opacity-80 leading-relaxed">
-              调研建档 → 线上匹配 → 志愿者服务 → 记录反馈 → 持续优化
-            </p>
-          </div>
-
-          {/* Card 4 */}
-          <div className="bg-white rounded-[32px] p-12 shadow-xl border border-black/5 hover:scale-[1.01] transition-transform">
-            <h3 className="text-2xl font-bold mb-8">服务承诺</h3>
-            <p className="text-xl opacity-80">
-              完全免费、隐私保护、长期陪伴
-            </p>
+        {/* Process Section */}
+        <div className="bg-[#2B0B0B] rounded-[48px] p-12 md:p-20 text-white overflow-hidden relative mb-20">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+          <div className="relative z-10">
+            <h3 className="text-3xl md:text-4xl font-black mb-16 text-center">标准化的服务流程</h3>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+              {[
+                { label: '调研建档', icon: <Search />, desc: '实地走访，深入了解真实需求' },
+                { label: '线上匹配', icon: <LinkIcon />, desc: '根据特长，精准连接志愿者' },
+                { label: '志愿者服务', icon: <Heart />, desc: '定期陪伴，建立深度情感纽带' },
+                { label: '记录反馈', icon: <ClipboardCheck />, desc: '每回必录，形成可追溯成长档案' },
+                { label: '持续优化', icon: <Sparkles />, desc: '数据驱动，不断迭代服务模式' }
+              ].map((step, i) => (
+                <div key={i} className="text-center space-y-4 relative">
+                  {i < 4 && (
+                    <div className="hidden md:block absolute top-10 left-[60%] w-full h-[2px] bg-white/10"></div>
+                  )}
+                  <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-6 hover:bg-pink-500/20 transition-all hover:scale-110 border border-white/5">
+                    {step.icon}
+                  </div>
+                  <h4 className="text-xl font-bold">{step.label}</h4>
+                  <p className="text-white/40 text-sm leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="mt-20 text-center">
-          <Link to="/service-objects" className="bg-[#2B0B0B] text-white hover:bg-black font-bold px-12 py-5 rounded-full transition-all inline-flex items-center gap-4 text-xl shadow-2xl">
-            查看需要帮助的人 <ArrowRight className="w-6 h-6" />
-          </Link>
+        {/* Closing Quote */}
+        <div className="text-center max-w-4xl mx-auto space-y-12">
+          <div className="inline-block px-8 py-3 bg-pink-100 text-pink-600 rounded-full font-bold text-lg">
+            O2O 公益闭环
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black text-[#2B0B0B] leading-tight">
+            “乡助桥”不仅仅是一个网站，更是一份承诺——用大学生的青春热情，回应乡村留守群体的真实需求。
+          </h2>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-8">
+            <Link to="/service-objects" className="bg-[#E84C4C] text-white hover:bg-black font-bold px-12 py-5 rounded-2xl transition-all inline-flex items-center gap-4 text-xl shadow-2xl shadow-red-200">
+              认领服务对象 <ArrowRight className="w-6 h-6" />
+            </Link>
+            <Link to="/join-us" className="bg-white text-[#2B0B0B] hover:bg-gray-50 border-2 border-gray-100 font-bold px-12 py-5 rounded-2xl transition-all inline-flex items-center gap-4 text-xl">
+              成为志愿者
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -84,3 +162,4 @@ const WhatWeDo = () => {
 };
 
 export default WhatWeDo;
+

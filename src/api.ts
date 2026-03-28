@@ -2,53 +2,41 @@ import { supabase } from './lib/supabase';
 
 export const api = {
   // Auth
-  login: async ({ username, password }: any) => {
-    // For this specific project requirement, we use the provided credentials
-    if (username === 'xiangzhuqiao' && password === 'xiangzhuqiao') {
-      // Mock a successful login by setting a flag in localStorage
-      localStorage.setItem('isAdminLoggedIn', 'true');
-      return { user: { role: 'admin' }, token: 'mock-admin-token' };
-    }
-    throw new Error('账号或密码错误');
+  login: async ({ email, password }: any) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
   },
 
   logout: async () => {
-    localStorage.removeItem('isAdminLoggedIn');
-    localStorage.removeItem('adminToken');
+    await supabase.auth.signOut();
   },
 
-  checkAuth: () => {
-    return localStorage.getItem('isAdminLoggedIn') === 'true';
+  getSession: async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    return data.session;
+  },
+
+  getMyRole: async () => {
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    const email = authData.user?.email;
+    if (!email) return 'anonymous';
+
+    const { data, error } = await supabase
+      .from('staff')
+      .select('role')
+      .eq('email', email)
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return (data?.role as any) || 'volunteer';
   },
 
   // Stats
   incrementView: async () => {
-    const today = new Date().toISOString().split('T')[0];
-    
-    // Check if we already have stats for today
-    const { data: existingStats, error: fetchError } = await supabase
-      .from('website_stats')
-      .select('*')
-      .eq('stat_date', today)
-      .single();
-
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      console.error('Error fetching stats:', fetchError);
-      return;
-    }
-
-    if (existingStats) {
-      // Update existing
-      await supabase
-        .from('website_stats')
-        .update({ page_views: (existingStats.page_views || 0) + 1 })
-        .eq('stat_date', today);
-    } else {
-      // Create new for today
-      await supabase
-        .from('website_stats')
-        .insert({ stat_date: today, page_views: 1 });
-    }
+    await supabase.rpc('increment_page_view');
   },
 
   getStats: async () => {

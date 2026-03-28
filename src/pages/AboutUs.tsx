@@ -1,28 +1,58 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Mail, Phone, MapPin, GraduationCap, Heart, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, GraduationCap, Heart, ShieldCheck, User } from 'lucide-react';
+import { api } from '../api';
 
 const AboutUs = () => {
-  const team = [
+  const [content, setContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const data = await api.getSiteContent();
+        setContent(data);
+      } catch (err) {
+        console.error('Failed to fetch content:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
+
+  const parseJson = (raw: any) => {
+    if (typeof raw !== 'string' || !raw.trim()) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const defaultTeam = [
     {
       name: '刘佳阳',
       role: '项目负责人 / 技术负责人',
       desc: '宜宾学院人工智能大一学生，负责平台整体规划、系统开发与技术架构。',
-      icon: <GraduationCap className="w-8 h-8" />
+      image: ''
     },
     {
       name: '黄友鑫',
       role: '运营负责人',
       desc: '宜宾学院人工智能大一学生，富有爱心，负责志愿者招募与社区运营。',
-      icon: <Heart className="w-8 h-8" />
+      image: ''
     },
     {
       name: '许涧',
       role: '指导老师',
       desc: '宜宾学院人工智能与大数据学部创新创业教研室主任，提供专业指导。',
-      icon: <ShieldCheck className="w-8 h-8" />
+      image: ''
     }
   ];
+
+  const team = parseJson(content?.team_members) || defaultTeam;
 
   return (
     <div className="min-h-screen bg-white text-[#333] font-sans">
@@ -30,16 +60,22 @@ const AboutUs = () => {
       
       <div className="pt-24 pb-32 px-4 md:px-24 max-w-7xl mx-auto">
         <div className="text-center mb-24 space-y-4">
-          <h2 className="text-5xl font-bold">关于我们</h2>
-          <p className="text-xl text-black/50">来自宜宾学院的青年力量，用技术温暖乡村</p>
+          <h2 className="text-5xl font-bold">{content?.team_intro_title || "关于我们"}</h2>
+          <p className="text-xl text-black/50">{content?.team_intro_subtitle || "来自宜宾学院的青年力量，用技术温暖乡村"}</p>
         </div>
 
         {/* Team Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32">
-          {team.map((member, index) => (
+          {team.map((member: any, index: number) => (
             <div key={index} className="bg-black/5 rounded-[40px] p-12 text-center space-y-6 hover:bg-[#F6A9B6]/10 transition-all border border-transparent hover:border-[#F6A9B6]/20 group">
-              <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform text-[#E84C4C]">
-                {member.icon}
+              <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform overflow-hidden">
+                {member.image ? (
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-[#E84C4C]">
+                    {member.role.includes('老师') ? <ShieldCheck className="w-10 h-10" /> : <User className="w-10 h-10" />}
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold">{member.name}</h3>
