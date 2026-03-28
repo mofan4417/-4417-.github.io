@@ -29,10 +29,10 @@ const Home = () => {
     const one = typeof content.hero_image === 'string' ? content.hero_image.trim() : '';
     if (one) return [one];
     return [
-      "https://source.unsplash.com/1600x900/?volunteer,elderly",
-      "https://source.unsplash.com/1600x900/?volunteer,child",
-      "https://source.unsplash.com/1600x900/?rural,china,volunteer",
-      "https://source.unsplash.com/1600x900/?community,helping",
+      "https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508847154043-be13a0a245d2?q=80&w=2070&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop",
     ];
   })();
 
@@ -67,9 +67,9 @@ const Home = () => {
 
     if (list.length === 0) {
       list = [
-        'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=village+life+service+moment+photo+0&image_size=square',
-        'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=village+life+service+moment+photo+1&image_size=square',
-        'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=village+life+service+moment+photo+2&image_size=square',
+        'https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2070&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1508847154043-be13a0a245d2?q=80&w=2070&auto=format&fit=crop',
       ];
     }
 

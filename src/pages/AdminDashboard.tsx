@@ -78,10 +78,11 @@ const AdminDashboard = () => {
   const maxHeroImages = 10;
 
   const recommendedHeroImages = [
-    "https://source.unsplash.com/1600x900/?volunteer,elderly",
-    "https://source.unsplash.com/1600x900/?volunteer,child",
-    "https://source.unsplash.com/1600x900/?rural,china,volunteer",
-    "https://source.unsplash.com/1600x900/?community,helping",
+    "https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1508847154043-be13a0a245d2?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop",
   ];
 
   const parseJsonStringArray = (raw: any) => {
