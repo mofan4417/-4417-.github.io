@@ -251,22 +251,22 @@ const AdminDashboard = () => {
         
         const session = await api.getSession();
         if (!session) {
-          window.location.href = '/admin/login';
+          navigate('/admin/login');
           return;
         }
         const role = await api.getMyRole();
         if (role !== 'admin' && role !== 'reviewer') {
           alert('权限不足');
-          window.location.href = '/';
+          navigate('/');
           return;
         }
         fetchData();
       } catch {
-        window.location.href = '/admin/login';
+        navigate('/admin/login');
       }
     };
     check();
-  }, []);
+  }, [navigate]);
 
   const readFileAsDataUrl = (file: File) => {
     return new Promise<string>((resolve, reject) => {
@@ -362,8 +362,9 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isAdminLoggedIn');
-    window.location.href = '/admin/login';
+    localStorage.removeItem('admin_bypass');
+    api.logout();
+    navigate('/admin/login');
   };
 
   const updateAppStatus = async (id: string, status: 'approved' | 'rejected') => {

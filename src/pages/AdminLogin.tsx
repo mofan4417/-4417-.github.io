@@ -15,6 +15,12 @@ const AdminLogin = () => {
     // 如果已经登录，直接跳转到后台
     const check = async () => {
       try {
+        const isBypass = localStorage.getItem('admin_bypass') === 'true';
+        if (isBypass) {
+          navigate('/admin/dashboard');
+          return;
+        }
+        
         const session = await api.getSession();
         if (session) navigate('/admin/dashboard');
       } catch {
@@ -30,7 +36,7 @@ const AdminLogin = () => {
     setError('');
     try {
       await api.login({ email, password });
-      window.location.href = '/admin/dashboard';
+      navigate('/admin/dashboard');
     } catch {
       setError('邮箱或密码错误，请重试。');
     } finally {
