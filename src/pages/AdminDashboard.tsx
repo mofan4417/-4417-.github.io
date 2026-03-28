@@ -50,6 +50,13 @@ const AdminDashboard = () => {
   const maxHomePhotos = 20;
   const maxHeroImages = 10;
 
+  const recommendedHeroImages = [
+    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+warm+and+hopeful+scene+of+university+volunteers+visiting+left-behind+children+and+elderly+in+rural+China%2C+soft+sunlight%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
+    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+kind+volunteer+helping+an+elderly+person+use+a+smartphone%2C+rural+home%2C+warm+tones%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
+    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=A+volunteer+tutoring+a+left-behind+child+after+school+in+a+rural+village%2C+warm+lighting%2C+cinematic%2C+high+quality&image_size=landscape_16_9",
+    "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Volunteers+recording+service+notes+and+sharing+smiles+with+left-behind+children+in+a+cozy+rural+community+room%2C+warm+cinematic+lighting%2C+high+quality&image_size=landscape_16_9",
+  ];
+
   const parseJsonStringArray = (raw: any) => {
     if (typeof raw !== 'string' || !raw.trim()) return [];
     try {
@@ -123,7 +130,8 @@ const AdminDashboard = () => {
       setStats(statsData);
       setSiteContent(content);
 
-      const heroImages = getHeroImagesFromContent(content);
+      const heroImagesFromDb = getHeroImagesFromContent(content);
+      const heroImages = heroImagesFromDb.length > 0 ? heroImagesFromDb : recommendedHeroImages.slice(0, maxHeroImages);
       const homePhotos = getHomePhotosFromContent(content);
       const displayCountRaw = Number(content?.home_photos_display_count);
       const displayCount = Number.isFinite(displayCountRaw) && displayCountRaw > 0
@@ -134,7 +142,7 @@ const AdminDashboard = () => {
         total_served: statsData.total_served || 0,
         total_hours: statsData.total_hours || 0,
         total_villages: statsData.total_villages || 0,
-        hero_image: content.hero_image || '',
+        hero_image: content.hero_image || heroImages[0] || '',
         hero_images: heroImages,
         hero_slideshow_interval_seconds: Number(content?.hero_slideshow_interval_seconds) || 6,
         hero_quote_1: content.hero_quote_1 || '',
@@ -815,6 +823,20 @@ const AdminDashboard = () => {
                         }}
                       />
                     </div>
+                    <button
+                      type="button"
+                      className="w-full bg-white/10 hover:bg-white/20 text-[#F3DDE4] font-bold px-6 py-3 rounded-xl transition-all border border-white/10 text-sm active:scale-95"
+                      onClick={() => {
+                        setSettingsForm((prev) => ({
+                          ...prev,
+                          hero_images: recommendedHeroImages.slice(0, maxHeroImages),
+                          hero_image: recommendedHeroImages[0] || prev.hero_image,
+                          hero_slideshow_interval_seconds: 6,
+                        }));
+                      }}
+                    >
+                      一键使用推荐封面（老人/儿童主题）
+                    </button>
                     <div className="text-xs text-white/40 leading-relaxed">
                       已启用平滑轮播（至少 2 秒）。封面图片建议使用与留守老人/儿童相关的高清横图链接。
                     </div>
