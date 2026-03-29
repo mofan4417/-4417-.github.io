@@ -20,7 +20,7 @@ const Home = () => {
   const [heroIndex, setHeroIndex] = useState(0);
   
   // Gamification states
-  const { addPoints, unlockAchievement, completeMission, level, points, achievements } = useGameStore();
+  const { addPoints, unlockAchievement, completeMission, level, points, achievements, xp, xpToNextLevel } = useGameStore();
   const [showRecommender, setShowRecommender] = useState(false);
   const [showMissions, setShowMissions] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -371,7 +371,7 @@ const Home = () => {
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-white uppercase tracking-tight">我的志愿者等级</h3>
-                    <p className="text-[#F9D8C6] text-xs font-black uppercase tracking-widest mt-1">距离下一级还需 {Math.max(0, 100 - (points % 100))} XP</p>
+                    <p className="text-[#F9D8C6] text-xs font-black uppercase tracking-widest mt-1">距离下一级还需 {Math.max(0, xpToNextLevel - Math.floor(xp))} XP</p>
                   </div>
                 </div>
 

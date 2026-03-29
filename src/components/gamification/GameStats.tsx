@@ -73,11 +73,11 @@ const GameStats = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="text-[#F3DDE4]/60">完成每日签到</span>
-            <CheckCircle className="isCompleted={true}" />
+            <CheckCircle isCompleted={true} />
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-[#F3DDE4]/60">了解服务成果</span>
-            <CheckCircle className="isCompleted={false}" />
+            <CheckCircle isCompleted={false} />
           </div>
         </div>
       </motion.div>
