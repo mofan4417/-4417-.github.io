@@ -8,10 +8,14 @@ import AboutUs from "./pages/AboutUs";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import SubmitObject from "./pages/SubmitObject";
+import GameStats from "./components/gamification/GameStats";
+import GameNotification from "./components/gamification/GameNotification";
 
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <GameStats />
+      <GameNotification />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/what-we-do" element={<WhatWeDo />} />

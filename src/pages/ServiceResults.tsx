@@ -3,8 +3,18 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { api } from '../api';
 import { Heart, Clock, MapPin, Quote, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useGameStore } from '../store/useGameStore';
 
 const ServiceResults = () => {
+  const { addPoints, unlockAchievement, completeMission } = useGameStore();
+
+  useEffect(() => {
+    // 增加积分和解锁成就
+    addPoints(15);
+    unlockAchievement('reader');
+    completeMission('read_results');
+  }, []);
   const [stats, setStats] = useState<any>({ total_served: 156, total_hours: 2340, total_villages: 12 });
   const [loading, setLoading] = useState(true);
   const [cases, setCases] = useState<any[]>([]);

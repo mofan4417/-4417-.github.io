@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles, Trophy, Zap, MessageSquare, Share2 } from 'lucide-react';
 import { api } from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useGameStore } from '../store/useGameStore';
+import { motion, AnimatePresence } from 'framer-motion';
+import Recommender from '../components/gamification/Recommender';
+import MissionsModal from '../components/gamification/MissionsModal';
+import ActivityWall from '../components/gamification/ActivityWall';
+import Leaderboard from '../components/gamification/Leaderboard';
+import ShareCard from '../components/gamification/ShareCard';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,6 +18,19 @@ const Home = () => {
   const [stats, setStats] = useState<any>({ total_served: 0, total_hours: 0, total_villages: 0, page_views: 0 });
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
+  
+  // Gamification states
+  const { addPoints, unlockAchievement, completeMission, level, points, achievements } = useGameStore();
+  const [showRecommender, setShowRecommender] = useState(false);
+  const [showMissions, setShowMissions] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+
+  useEffect(() => {
+    // 首次访问成就
+    unlockAchievement('first_visit');
+    // 每日签到任务
+    completeMission('daily_login');
+  }, []);
 
   const parseJsonStringArray = (raw: unknown) => {
     if (typeof raw !== 'string' || !raw.trim()) return [];
@@ -202,37 +222,43 @@ const Home = () => {
             </p>
 
             {/* 核心数据动态显示 */}
-            <div className="flex flex-wrap gap-8 md:gap-12 pt-4">
-              <div className="flex flex-col">
-                <span className="text-3xl font-bold text-[#F9D8C6]">{stats.total_villages}</span>
-                <span className="text-sm opacity-60">已走访村庄</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-4">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest">已走访村庄</div>
+                <div className="text-3xl font-black text-[#F9D8C6] tracking-tighter">{stats.total_villages}</div>
               </div>
-              <div className="hidden md:block w-px h-12 bg-white/10"></div>
-              <div className="flex flex-col">
-                <span className="text-3xl font-bold text-[#F9D8C6]">{stats.total_served}</span>
-                <span className="text-sm opacity-60">已服务人数</span>
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest">已服务人数</div>
+                <div className="text-3xl font-black text-[#F9D8C6] tracking-tighter">{stats.total_served}</div>
               </div>
-              <div className="hidden md:block w-px h-12 bg-white/10"></div>
-              <div className="flex flex-col">
-                <span className="text-3xl font-bold text-[#F9D8C6]">{stats.total_hours}</span>
-                <span className="text-sm opacity-60">已陪伴小时</span>
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest">已陪伴小时</div>
+                <div className="text-3xl font-black text-[#F9D8C6] tracking-tighter">{stats.total_hours}</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest">累计访问</div>
+                <div className="text-3xl font-black text-[#F9D8C6] tracking-tighter">{formatViews(displayPageViews)}</div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4 sm:gap-8 pt-10">
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/service-objects')}
-                className="w-full sm:w-auto bg-[#F9D8C6] hover:bg-white text-[#2B0B0B] font-bold px-8 sm:px-12 py-4 sm:py-5 rounded-full transition-all shadow-2xl flex items-center justify-center sm:justify-start gap-4 text-base sm:text-xl group active:scale-95"
+                className="w-full sm:w-auto bg-[#F9D8C6] hover:bg-white text-[#2B0B0B] font-black uppercase tracking-widest px-8 sm:px-12 py-4 sm:py-5 rounded-3xl transition-all shadow-[0_20px_40px_rgba(249,216,198,0.2)] flex items-center justify-center sm:justify-start gap-4 text-base sm:text-xl group"
               >
-                我要认领服务对象
+                认领服务对象
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button 
-                onClick={() => navigate('/join-us')}
-                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#F3DDE4] font-bold px-8 sm:px-12 py-4 sm:py-5 rounded-full transition-all border border-white/20 backdrop-blur-sm text-base sm:text-xl active:scale-95"
+              </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowRecommender(true)}
+                className="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-[#F9D8C6] font-black uppercase tracking-widest px-8 sm:px-12 py-4 sm:py-5 rounded-3xl transition-all backdrop-blur-sm text-base sm:text-xl flex items-center justify-center gap-4"
               >
-                我要成为志愿者
-              </button>
+                <Sparkles className="w-6 h-6" /> AI 智能推荐
+              </motion.button>
             </div>
           </div>
 
@@ -329,6 +355,83 @@ const Home = () => {
           <p>网站总浏览量：{formatViews(displayPageViews)}</p>
         </div>
       </main>
+
+      {/* Gamification Hub Section */}
+      <section className="py-32 px-4 md:px-24 bg-gradient-to-b from-transparent to-black/20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* Missions & Profile */}
+            <div className="lg:col-span-1 space-y-8">
+              <div className="bg-[#2B0B0B]/40 backdrop-blur-xl border border-white/5 rounded-[40px] p-10 space-y-10 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#E84C4C]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                
+                <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-[#E84C4C] to-[#F9D8C6] rounded-3xl flex items-center justify-center text-3xl font-black text-[#2B0B0B] shadow-2xl group-hover:rotate-6 transition-transform">
+                    {level}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-tight">我的志愿者等级</h3>
+                    <p className="text-[#F9D8C6] text-xs font-black uppercase tracking-widest mt-1">距离下一级还需 {Math.max(0, 100 - (points % 100))} XP</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => setShowMissions(true)}
+                    className="flex flex-col items-center justify-center gap-4 p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-[#F9D8C6]/30 hover:bg-white/10 transition-all group/btn"
+                  >
+                    <Zap className="w-8 h-8 text-[#F9D8C6] group-hover/btn:scale-125 transition-transform" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">每日任务</span>
+                  </button>
+                  <button 
+                    onClick={() => setShowShare(true)}
+                    className="flex flex-col items-center justify-center gap-4 p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-[#F9D8C6]/30 hover:bg-white/10 transition-all group/btn"
+                  >
+                    <Share2 className="w-8 h-8 text-[#F9D8C6] group-hover/btn:scale-125 transition-transform" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">荣誉证书</span>
+                  </button>
+                </div>
+
+                <div className="bg-white/5 rounded-3xl p-6 border border-white/5">
+                  <div className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">最新成就</div>
+                  <div className="flex gap-4">
+                    {achievements.filter(a => a.unlocked).slice(0, 3).map(a => (
+                      <div key={a.id} className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-xl hover:scale-110 transition-transform cursor-help" title={a.title}>
+                        {a.icon}
+                      </div>
+                    ))}
+                    {achievements.filter(a => a.unlocked).length === 0 && (
+                      <div className="text-xs text-white/20 italic">尚未解锁成就</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <ActivityWall />
+            </div>
+
+            {/* Leaderboard */}
+            <div className="lg:col-span-2">
+              <Leaderboard />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <AnimatePresence>
+        {showRecommender && <Recommender onClose={() => setShowRecommender(false)} />}
+        {showMissions && <MissionsModal onClose={() => setShowMissions(false)} />}
+        {showShare && (
+          <ShareCard 
+            onClose={() => setShowShare(false)} 
+            userData={{
+              name: '志愿者', // In real app, get from auth
+              level: level,
+              points: points,
+              unlockedCount: achievements.filter(a => a.unlocked).length
+            }} 
+          />
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>

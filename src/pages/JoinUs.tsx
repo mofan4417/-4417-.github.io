@@ -4,8 +4,10 @@ import { Send, CheckCircle2, User, School, Phone, Clock, FileText, Heart, ArrowL
 import { supabase } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useGameStore } from '../store/useGameStore';
 
 const JoinUs = () => {
+  const { addPoints, unlockAchievement } = useGameStore();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -45,6 +47,8 @@ const JoinUs = () => {
 
       if (error) throw error;
       
+      addPoints(100);
+      unlockAchievement('helper');
       setIsSubmitted(true);
       // 同时模拟发送邮件通知管理者的逻辑（实际需要后端支持）
       console.log('正在通知管理者：新志愿者申请来自', formData.name);
