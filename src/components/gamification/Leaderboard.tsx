@@ -5,10 +5,10 @@ import { useGameStore } from '../../store/useGameStore';
 
 const Leaderboard = () => {
   const users = [
-    { name: '刘佳阳', level: 15, points: 2840, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
-    { name: '黄友鑫', level: 12, points: 2150, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aria' },
-    { name: '李强', level: 10, points: 1980, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver' },
-    { name: '王敏', level: 8, points: 1560, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia' },
+    { name: '刘佳阳', level: 9, points: 2840, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
+    { name: '黄友鑫', level: 8, points: 2150, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aria' },
+    { name: '李强', level: 7, points: 1980, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver' },
+    { name: '王敏', level: 6, points: 1560, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia' },
     { name: '陈晨', level: 5, points: 1240, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Leo' },
   ];
 

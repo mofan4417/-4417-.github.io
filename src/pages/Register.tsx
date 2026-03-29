@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Phone, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
+import { User, Mail, Phone, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Heart, Sparkles, Trophy, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useGameStore } from '../store/useGameStore';
 import Navbar from '../components/Navbar';
@@ -68,21 +68,21 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1A0707] relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#0A0505] relative overflow-hidden flex flex-col selection:bg-[#7B1FA2] selection:text-white">
       <Navbar />
       
       {/* Immersive Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#2B0B0B] via-[#1A0707] to-black opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1A0707] via-[#0A0505] to-black opacity-90" />
         <motion.div 
           animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3] 
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2] 
           }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#E84C4C]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" 
+          transition={{ duration: 15, repeat: Infinity }}
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#7B1FA2]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" 
         />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F9D8C6]/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#4A148C]/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
       <main className="flex-grow flex items-center justify-center p-4 relative z-10">
@@ -95,12 +95,12 @@ const Register = () => {
             className="hidden lg:block space-y-12"
           >
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 bg-[#E84C4C]/20 px-4 py-2 rounded-full border border-[#E84C4C]/30 text-[#F9D8C6] text-xs font-black uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 bg-[#7B1FA2]/20 px-4 py-2 rounded-full border border-[#7B1FA2]/30 text-[#F9D8C6] text-xs font-black uppercase tracking-widest">
                 <Sparkles className="w-4 h-4" /> 加入乡助桥
               </div>
               <h1 className="text-6xl font-black text-white leading-tight">
                 开启您的<br />
-                <span className="text-[#F9D8C6]">公益元宇宙</span>
+                <span className="bg-gradient-to-r from-[#7B1FA2] to-[#F9D8C6] bg-clip-text text-transparent">公益元宇宙</span>
               </h1>
               <p className="text-xl text-[#F3DDE4]/60 font-medium leading-relaxed max-w-md">
                 通过游戏化的方式参与乡村振兴，让每一份爱心都能被看见、被记录、被奖赏。
@@ -109,15 +109,15 @@ const Register = () => {
 
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-4">
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-[#F9D8C6]" />
+                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5">
+                  <Heart className="w-6 h-6 text-[#7B1FA2]" />
                 </div>
                 <h3 className="font-black text-white uppercase tracking-tight">爱心认领</h3>
                 <p className="text-sm text-[#F3DDE4]/40 leading-relaxed">一对一精准匹配，陪伴留守老人与儿童。</p>
               </div>
               <div className="space-y-4">
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-[#F9D8C6]" />
+                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5">
+                  <Trophy className="w-6 h-6 text-[#FFD700]" />
                 </div>
                 <h3 className="font-black text-white uppercase tracking-tight">荣誉体系</h3>
                 <p className="text-sm text-[#F3DDE4]/40 leading-relaxed">9级志愿者成长体系，解锁专属勋章与头衔。</p>
@@ -129,9 +129,9 @@ const Register = () => {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#2B0B0B]/40 backdrop-blur-3xl border border-white/10 rounded-[48px] p-10 md:p-16 shadow-2xl relative overflow-hidden"
+            className="bg-[#1A0707]/60 backdrop-blur-[40px] border border-white/10 rounded-[48px] p-10 md:p-16 shadow-[0_32px_64px_rgba(0,0,0,0.5)] relative overflow-hidden group"
           >
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#E84C4C] to-[#F9D8C6]" />
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] group-hover:animate-shimmer" />
             
             <div className="mb-10 text-center lg:text-left">
               <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-2">注册新账号</h2>
@@ -148,7 +148,7 @@ const Register = () => {
                     required
                     type="text"
                     placeholder="您的昵称"
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   />
@@ -161,7 +161,7 @@ const Register = () => {
                     required
                     type="email"
                     placeholder="example@mail.com"
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -176,7 +176,7 @@ const Register = () => {
                   required
                   type="tel"
                   placeholder="138xxxx8888"
-                  className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all font-medium"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
@@ -192,14 +192,14 @@ const Register = () => {
                       required
                       type={showPassword ? 'text' : 'password'}
                       placeholder="至少 6 位"
-                      className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all font-medium pr-14"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium pr-14 placeholder:text-white/20"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -211,44 +211,49 @@ const Register = () => {
                   </label>
                   <input
                     required
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="重复输入密码"
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#F9D8C6]/50 transition-all font-medium"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   />
                 </div>
               </div>
 
-              {error && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-xs font-bold flex items-center gap-2 bg-red-400/10 p-4 rounded-xl border border-red-400/20"
-                >
-                  <X className="w-4 h-4" /> {error}
-                </motion.div>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs py-3 px-4 rounded-xl font-bold flex items-center gap-2"
+                  >
+                    <X className="w-4 h-4" /> {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <button
                 disabled={loading}
                 type="submit"
-                className="w-full bg-[#F9D8C6] hover:bg-[#F7CBB6] text-[#2B0B0B] font-black uppercase tracking-widest py-5 rounded-2xl transition-all shadow-xl shadow-[#F9D8C6]/10 flex items-center justify-center gap-3 group disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-[#7B1FA2] to-[#4A148C] hover:shadow-[0_0_30px_rgba(123,31,162,0.5)] text-white font-black uppercase tracking-[0.2em] py-5 rounded-2xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
               >
-                {loading ? '正在注册...' : '立即开启之旅'} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {loading ? '正在注册...' : '立即开启志愿之旅'}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </button>
-
-              <div className="text-center text-xs font-medium text-[#F3DDE4]/20 pt-6 border-t border-white/5">
-                已有账号？ <Link to="/login" className="text-[#F9D8C6] hover:underline font-black">立即登录</Link>
-              </div>
             </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-[#F3DDE4]/30 text-xs font-bold uppercase tracking-widest">
+                已经有账号了？ 
+                <Link to="/login" className="text-[#F9D8C6] hover:text-white transition-colors ml-2">立即登录</Link>
+              </p>
+            </div>
           </motion.div>
         </div>
       </main>
     </div>
   );
 };
-
-import { Sparkles, Trophy, X } from 'lucide-react';
 
 export default Register;

@@ -15,7 +15,54 @@ import ParticleBackground from '../components/visual/ParticleBackground';
 import MagneticButton from '../components/visual/MagneticButton';
 import VoiceSearch from '../components/visual/VoiceSearch';
 
+import Lottie from 'lottie-react';
+import statsAnimation from '../assets/stats-animation.json'; // We'll need to create or find this
+
+const DataCard = ({ item, index, y }: { item: any, index: number, y: any }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.8 + index * 0.1 }}
+      className="bg-white/5 backdrop-blur-[40px] border border-white/10 p-8 rounded-[40px] group hover:bg-white/10 transition-all hover:border-white/20 shadow-[0_32px_64px_rgba(0,0,0,0.3)] relative overflow-hidden"
+    >
+      {/* Glow Effect */}
+      <div className="absolute -inset-[100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-shimmer pointer-events-none" />
+      
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-8">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 group-hover:scale-110 transition-transform duration-500 shadow-inner" style={{ color: item.color }}>
+            {item.icon}
+          </div>
+          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Live Sync</div>
+        </div>
+        
+        <div className="space-y-1">
+          <div className="text-5xl font-black mb-1 tracking-tighter flex items-baseline gap-1">
+            <span className="bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
+              {item.value}
+            </span>
+          </div>
+          <div className="text-[11px] font-black text-[#F3DDE4]/40 uppercase tracking-[0.2em]">{item.label}</div>
+        </div>
+
+        {/* Mini Lottie/Visualizer */}
+        <div className="mt-8 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+          <Lottie 
+            animationData={statsAnimation} 
+            loop={true} 
+            className="w-full h-full opacity-20 group-hover:opacity-100 transition-opacity duration-500"
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+import { useTranslation } from 'react-i18next';
+
 const Home = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [content, setContent] = useState<any>({});
   const [stats, setStats] = useState<any>({ total_served: 0, total_hours: 0, total_villages: 0, page_views: 0 });
@@ -104,7 +151,7 @@ const Home = () => {
               className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-2xl border border-white/10 px-6 py-3 rounded-full shadow-[0_0_30px_rgba(123,31,162,0.2)]"
             >
               <div className="w-2 h-2 bg-[#F9D8C6] rounded-full animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-[0.3em] text-[#F3DDE4]/60">全球领先的数字化志愿者平台</span>
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-[#F3DDE4]/60">{t('welcome')}</span>
             </motion.div>
 
             <div className="space-y-6">
@@ -114,8 +161,8 @@ const Home = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-7xl md:text-9xl font-black tracking-tighter leading-none"
               >
-                乡助桥 <br />
-                <span className="bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] bg-clip-text text-transparent italic">让爱无界</span>
+                {t('welcome')} <br />
+                <span className="bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] bg-clip-text text-transparent italic">{t('slogan')}</span>
               </motion.h1>
               
               <motion.p 
@@ -124,7 +171,7 @@ const Home = () => {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="text-xl md:text-2xl text-[#F3DDE4]/40 font-medium max-w-2xl mx-auto leading-relaxed"
               >
-                连接 128,000+ 志愿者，为偏远地区提供 4K 级沉浸式情感陪伴与数字化精准帮扶。
+                {t('hero_desc')}
               </motion.p>
             </div>
 
@@ -135,7 +182,7 @@ const Home = () => {
               className="flex flex-col md:flex-row items-center justify-center gap-8 pt-8"
             >
               <MagneticButton onClick={() => navigate('/register')}>
-                一键开启志愿之旅
+                {t('join_now')}
               </MagneticButton>
               
               <button 
@@ -145,7 +192,7 @@ const Home = () => {
                 <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#7B1FA2] transition-colors">
                   <MousePointer2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </div>
-                AI 智能匹配分析
+                {t('ai_match')}
               </button>
             </motion.div>
           </motion.div>
@@ -156,28 +203,36 @@ const Home = () => {
             className="absolute bottom-24 left-0 right-0 px-4 md:px-24 hidden lg:grid grid-cols-3 gap-8"
           >
             {[
-              { label: '在线志愿者', value: '1,284', icon: <Globe className="w-5 h-5" />, color: '#7B1FA2' },
-              { label: '累计陪伴时长', value: '45,920h', icon: <Zap className="w-5 h-5" />, color: '#F9D8C6' },
-              { label: '正在进行的任务', value: '342', icon: <Trophy className="w-5 h-5" />, color: '#4A148C' }
+              { label: t('online_volunteers'), value: '1,284', icon: <Globe className="w-5 h-5" />, color: '#7B1FA2' },
+              { label: t('total_hours'), value: '45,920h', icon: <Zap className="w-5 h-5" />, color: '#F9D8C6' },
+              { label: t('ongoing_tasks'), value: '342', icon: <Trophy className="w-5 h-5" />, color: '#4A148C' }
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 + i * 0.1 }}
-                className="bg-white/5 backdrop-blur-3xl border border-white/10 p-8 rounded-[32px] group hover:bg-white/10 transition-all hover:border-white/20 shadow-2xl"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 group-hover:scale-110 transition-transform" style={{ color: item.color }}>
-                    {item.icon}
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-white/20">Real-time Data</div>
-                </div>
-                <div className="text-4xl font-black mb-2 tracking-tighter">{item.value}</div>
-                <div className="text-xs font-bold text-[#F3DDE4]/40 uppercase tracking-widest">{item.label}</div>
-              </motion.div>
+              <DataCard key={i} item={item} index={i} y={y2} />
             ))}
           </motion.div>
         </section>
+      </main>
+
+      <Footer />
+
+      {/* Gamification Modals */}
+      <AnimatePresence>
+        {showRecommender && <Recommender onClose={() => setShowRecommender(false)} />}
+        {showMissions && <MissionsModal onClose={() => setShowMissions(false)} />}
+        {showShare && (
+          <ShareCard 
+            onClose={() => setShowShare(false)} 
+            userData={{
+              name: '志愿者',
+              level: level,
+              points: points,
+              unlockedCount: achievements.filter(a => a.unlocked).length
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default Home;
