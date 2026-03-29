@@ -72,7 +72,7 @@ const MagneticButton = ({ children, className = '', onClick }: MagneticButtonPro
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onClick}
-        className={`group relative px-12 py-6 bg-gradient-to-br from-[#7B1FA2] to-[#4A148C] text-white rounded-full font-black uppercase tracking-[0.2em] text-sm overflow-hidden transition-all duration-300 shadow-[0_20px_50px_rgba(123,31,162,0.3)] hover:shadow-[0_20px_80px_rgba(123,31,162,0.6)] ${className}`}
+        className={`group relative px-12 py-6 bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white rounded-full font-black uppercase tracking-[0.2em] text-sm overflow-hidden transition-all duration-300 shadow-[0_20px_50px_rgba(139,0,0,0.35)] hover:shadow-[0_20px_80px_rgba(139,0,0,0.65)] ${className}`}
       >
         {/* Shimmer Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
@@ -92,7 +92,7 @@ const MagneticButton = ({ children, className = '', onClick }: MagneticButtonPro
       {/* Dynamic Glow Shadow */}
       <motion.div 
         style={{ x: useTransform(springX, (v) => v * 1.2), y: useTransform(springY, (v) => v * 1.2), opacity: 0.3 }}
-        className="absolute inset-0 bg-[#7B1FA2] blur-3xl -z-10 rounded-full pointer-events-none"
+        className="absolute inset-0 bg-[#8B0000] blur-3xl -z-10 rounded-full pointer-events-none"
       />
     </motion.div>
   );

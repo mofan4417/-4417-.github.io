@@ -66,7 +66,7 @@ const VoiceSearch = ({ onResult }: VoiceSearchProps) => {
         whileTap={{ scale: 0.9 }}
         onClick={toggleListening}
         className={`w-18 h-18 rounded-[28px] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/10 transition-all duration-500 relative overflow-hidden group ${
-          isListening ? 'bg-gradient-to-br from-red-500 to-red-700' : 'bg-gradient-to-br from-[#7B1FA2] to-[#4A148C] backdrop-blur-xl'
+          isListening ? 'bg-gradient-to-br from-[#D4AF37] to-[#8B0000]' : 'bg-gradient-to-br from-[#8B0000] to-[#722F37] backdrop-blur-xl'
         }`}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
@@ -88,7 +88,7 @@ const VoiceSearch = ({ onResult }: VoiceSearchProps) => {
             exit={{ opacity: 0, x: 40, scale: 0.8 }}
             className="absolute left-24 bottom-0 bg-[#1A0707]/80 backdrop-blur-[40px] border border-white/10 p-8 rounded-[32px] w-[320px] shadow-[0_32px_64px_rgba(0,0,0,0.5)] overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-[#7B1FA2]" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#D4AF37] to-[#8B0000]" />
             <div className="flex items-center gap-4 mb-6">
               <div className="flex gap-1.5 h-6 items-center">
                 {[...Array(5)].map((_, i) => (
@@ -96,7 +96,7 @@ const VoiceSearch = ({ onResult }: VoiceSearchProps) => {
                     key={i}
                     animate={{ height: [4, 20, 4], opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
-                    className="w-1 bg-[#F9D8C6] rounded-full shadow-[0_0_10px_rgba(249,221,198,0.5)]"
+                    className="w-1 bg-[#D4AF37] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.5)]"
                   />
                 ))}
               </div>

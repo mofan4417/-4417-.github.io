@@ -19,7 +19,7 @@ const GameStats = () => {
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-32 right-8 z-[60] lg:hidden w-14 h-14 rounded-2xl bg-gradient-to-br from-[#7B1FA2] to-[#4A148C] text-white flex items-center justify-center shadow-[0_0_20px_rgba(123,31,162,0.5)] border border-white/20"
+        className="fixed bottom-32 right-8 z-[60] lg:hidden w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,0,0,0.55)] border border-white/20"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Layout className="w-6 h-6" />}
       </motion.button>
@@ -33,7 +33,7 @@ const GameStats = () => {
         >
           {/* Shimmering Border */}
           <div className="absolute inset-0 border border-white/5 rounded-[32px] pointer-events-none" />
-          <div className="absolute -inset-[2px] bg-gradient-to-r from-transparent via-[#7B1FA2]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-shimmer" />
+          <div className="absolute -inset-[2px] bg-gradient-to-r from-transparent via-[#8B0000]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 animate-shimmer" />
 
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
@@ -41,7 +41,7 @@ const GameStats = () => {
                 <motion.div 
                   animate={currentLevelInfo.effect ? { 
                     scale: [1, 1.1, 1],
-                    boxShadow: ["0 0 10px rgba(123,31,162,0.3)", "0 0 30px rgba(123,31,162,0.6)", "0 0 10px rgba(123,31,162,0.3)"]
+                    boxShadow: ["0 0 10px rgba(139,0,0,0.3)", "0 0 30px rgba(139,0,0,0.6)", "0 0 10px rgba(139,0,0,0.3)"]
                   } : {}}
                   transition={{ repeat: Infinity, duration: 3 }}
                   className={`w-14 h-14 bg-gradient-to-br ${currentLevelInfo.color} text-[#1A0707] rounded-2xl flex items-center justify-center font-black text-3xl shadow-2xl relative overflow-hidden`}
@@ -66,13 +66,13 @@ const GameStats = () => {
             <div className="space-y-3 mb-8">
               <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.1em] text-white/40">
                 <span>Experience (XP)</span>
-                <span className="text-[#F9D8C6]">{Math.floor(xp)} <span className="text-white/20">/</span> {xpToNextLevel}</span>
+                <span className="text-[#D4AF37]">{Math.floor(xp)} <span className="text-white/20">/</span> {xpToNextLevel}</span>
               </div>
               <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/10 p-[2px]">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  className="h-full bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] rounded-full shadow-[0_0_15px_rgba(123,31,162,0.5)] relative"
+                  className="h-full bg-gradient-to-r from-[#8B0000] via-[#D4AF37] to-[#722F37] rounded-full shadow-[0_0_15px_rgba(139,0,0,0.5)] relative"
                 >
                   <div className="absolute inset-0 bg-white/20 animate-shimmer" />
                 </motion.div>
@@ -82,14 +82,14 @@ const GameStats = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/5 rounded-2xl p-3 border border-white/5 hover:bg-white/10 transition-colors group/item">
                 <div className="flex items-center gap-2 mb-1">
-                  <Trophy className="w-3.5 h-3.5 text-[#F9D8C6]" />
+                  <Trophy className="w-3.5 h-3.5 text-[#D4AF37]" />
                   <span className="text-[10px] font-black text-white/40 uppercase">Badges</span>
                 </div>
                 <div className="text-sm font-black text-white">{unlockedCount} <span className="text-[10px] text-white/20 font-medium">Earned</span></div>
               </div>
               <div className="bg-white/5 rounded-2xl p-3 border border-white/5 hover:bg-white/10 transition-colors group/item">
                 <div className="flex items-center gap-2 mb-1">
-                  <Star className="w-3.5 h-3.5 text-[#F9D8C6]" />
+                  <Star className="w-3.5 h-3.5 text-[#D4AF37]" />
                   <span className="text-[10px] font-black text-white/40 uppercase">Rank</span>
                 </div>
                 <div className="text-sm font-black text-white">#128 <span className="text-[10px] text-white/20 font-medium">Global</span></div>
@@ -107,10 +107,10 @@ const GameStats = () => {
         >
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#F9D8C6]" />
+              <Zap className="w-4 h-4 text-[#D4AF37]" />
               <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/60">Daily Missions</h3>
             </div>
-            <div className="px-2 py-1 rounded-md bg-[#7B1FA2]/20 border border-[#7B1FA2]/30 text-[9px] font-black text-[#F9D8C6] uppercase tracking-wider">
+            <div className="px-2 py-1 rounded-md bg-[#8B0000]/15 border border-white/10 text-[9px] font-black text-[#D4AF37] uppercase tracking-wider">
               {missions.filter(m => m.completed).length}/{missions.length}
             </div>
           </div>
@@ -119,15 +119,15 @@ const GameStats = () => {
             {missions.slice(0, 3).map((mission) => (
               <div key={mission.id} className="flex items-center justify-between group/mission cursor-pointer">
                 <div className="flex items-center gap-3">
-                  <div className={`w-1.5 h-1.5 rounded-full ${mission.completed ? 'bg-[#7B1FA2]' : 'bg-white/10'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${mission.completed ? 'bg-[#D4AF37]' : 'bg-white/10'}`} />
                   <span className={`text-xs font-bold transition-colors ${mission.completed ? 'text-white/40 line-through' : 'text-white/80 group-hover/mission:text-white'}`}>
                     {mission.title}
                   </span>
                 </div>
                 <div className={`px-2 py-0.5 rounded-full text-[9px] font-black border transition-all ${
                   mission.completed 
-                    ? 'bg-[#7B1FA2]/10 border-[#7B1FA2]/20 text-[#7B1FA2]' 
-                    : 'bg-white/5 border-white/10 text-white/40 group-hover/mission:border-[#7B1FA2]/40 group-hover/mission:text-[#F9D8C6]'
+                    ? 'bg-[#8B0000]/15 border-white/10 text-[#D4AF37]' 
+                    : 'bg-white/5 border-white/10 text-white/40 group-hover/mission:border-white/20 group-hover/mission:text-[#D4AF37]'
                 }`}>
                   +{mission.points} XP
                 </div>

@@ -44,14 +44,14 @@ const GameNotification = () => {
           initial={{ y: -100, opacity: 0, x: '-50%', scale: 0.8 }}
           animate={{ y: 50, opacity: 1, x: '-50%', scale: 1 }}
           exit={{ y: -100, opacity: 0, x: '-50%', scale: 0.8 }}
-          className="fixed top-0 left-1/2 z-[200] bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] p-[2px] rounded-full shadow-[0_20px_50px_rgba(123,31,162,0.4)] group overflow-hidden"
+          className="fixed top-0 left-1/2 z-[200] bg-gradient-to-r from-[#8B0000] via-[#D4AF37] to-[#722F37] p-[2px] rounded-full shadow-[0_20px_50px_rgba(139,0,0,0.45)] group overflow-hidden"
         >
           <div className="absolute inset-0 bg-white/20 animate-shimmer" />
           <div className="relative bg-[#1A0707]/90 backdrop-blur-3xl px-10 py-4 rounded-full flex items-center gap-6 border border-white/5">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#7B1FA2] to-[#4A148C] rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-              {notif.type === 'points' && <Star className="w-5 h-5 text-[#F9D8C6]" />}
-              {notif.type === 'level' && <Zap className="w-5 h-5 text-[#FFD700]" />}
-              {notif.type === 'achievement' && <Trophy className="w-5 h-5 text-[#F9D8C6]" />}
+            <div className="w-10 h-10 bg-gradient-to-br from-[#8B0000] to-[#722F37] rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform border border-white/10">
+              {notif.type === 'points' && <Star className="w-5 h-5 text-[#D4AF37]" />}
+              {notif.type === 'level' && <Zap className="w-5 h-5 text-[#D4AF37]" />}
+              {notif.type === 'achievement' && <Trophy className="w-5 h-5 text-[#D4AF37]" />}
             </div>
             <div className="flex flex-col">
               <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{notif.type === 'level' ? 'System Evolution' : 'Quest Reward'}</span>

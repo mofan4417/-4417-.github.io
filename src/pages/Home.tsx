@@ -11,7 +11,6 @@ import MissionsModal from '../components/gamification/MissionsModal';
 import ActivityWall from '../components/gamification/ActivityWall';
 import Leaderboard from '../components/gamification/Leaderboard';
 import ShareCard from '../components/gamification/ShareCard';
-import ParticleBackground from '../components/visual/ParticleBackground';
 import MagneticButton from '../components/visual/MagneticButton';
 import VoiceSearch from '../components/visual/VoiceSearch';
 
@@ -133,9 +132,16 @@ const Home = () => {
     initHome();
   }, []);
 
+  const heroCoverSrc = (() => {
+    const direct = typeof content?.hero_image === 'string' ? content.hero_image.trim() : '';
+    if (direct) return direct;
+    const list = content?.hero_images;
+    if (Array.isArray(list) && list.length > 0 && typeof list[0] === 'string') return list[0].trim();
+    return 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1920&auto=format&fit=crop';
+  })();
+
   return (
-    <div className="relative min-h-screen bg-[#1A0707] text-white overflow-hidden selection:bg-[#7B1FA2] selection:text-white">
-      <ParticleBackground />
+    <div className="relative min-h-screen bg-transparent text-white overflow-hidden selection:bg-[#8B0000] selection:text-white">
       <VoiceSearch onResult={handleVoiceResult} />
       
       <Navbar />
@@ -143,14 +149,27 @@ const Home = () => {
       <main className="relative z-10">
         {/* Hero Section V3 */}
         <section className="relative h-screen flex items-center justify-center px-4 md:px-24 overflow-hidden">
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-full aspect-video max-h-[80vh] overflow-hidden">
+            <img
+              src={heroCoverSrc}
+              alt="封面图"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0505]/70 via-transparent to-[#0A0505]/80" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(139,0,0,0.25)_0%,_transparent_60%)]" />
+          </div>
+
           <motion.div style={{ y: y1, opacity }} className="text-center space-y-12 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-2xl border border-white/10 px-6 py-3 rounded-full shadow-[0_0_30px_rgba(123,31,162,0.2)]"
+              className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-2xl border border-white/10 px-6 py-3 rounded-full shadow-[0_0_30px_rgba(139,0,0,0.2)]"
             >
-              <div className="w-2 h-2 bg-[#F9D8C6] rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse" />
               <span className="text-xs font-black uppercase tracking-[0.3em] text-[#F3DDE4]/60">{t('welcome')}</span>
             </motion.div>
 
@@ -162,7 +181,7 @@ const Home = () => {
                 className="text-7xl md:text-9xl font-black tracking-tighter leading-none"
               >
                 {t('welcome')} <br />
-                <span className="bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] bg-clip-text text-transparent italic">{t('slogan')}</span>
+                <span className="bg-gradient-to-r from-[#8B0000] via-[#D4AF37] to-[#722F37] bg-clip-text text-transparent italic">{t('slogan')}</span>
               </motion.h1>
               
               <motion.p 
@@ -189,7 +208,7 @@ const Home = () => {
                 onClick={() => setShowRecommender(true)}
                 className="group flex items-center gap-4 text-sm font-black uppercase tracking-widest text-[#F3DDE4]/60 hover:text-white transition-colors"
               >
-                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#7B1FA2] transition-colors">
+                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#8B0000] transition-colors">
                   <MousePointer2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </div>
                 {t('ai_match')}
@@ -203,9 +222,9 @@ const Home = () => {
             className="absolute bottom-24 left-0 right-0 px-4 md:px-24 hidden lg:grid grid-cols-3 gap-8"
           >
             {[
-              { label: t('online_volunteers'), value: '1,284', icon: <Globe className="w-5 h-5" />, color: '#7B1FA2' },
-              { label: t('total_hours'), value: '45,920h', icon: <Zap className="w-5 h-5" />, color: '#F9D8C6' },
-              { label: t('ongoing_tasks'), value: '342', icon: <Trophy className="w-5 h-5" />, color: '#4A148C' }
+              { label: t('online_volunteers'), value: '1,284', icon: <Globe className="w-5 h-5" />, color: '#8B0000' },
+              { label: t('total_hours'), value: '45,920h', icon: <Zap className="w-5 h-5" />, color: '#D4AF37' },
+              { label: t('ongoing_tasks'), value: '342', icon: <Trophy className="w-5 h-5" />, color: '#722F37' }
             ].map((item, i) => (
               <DataCard key={i} item={item} index={i} y={y2} />
             ))}

@@ -68,7 +68,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0505] relative overflow-hidden flex flex-col selection:bg-[#7B1FA2] selection:text-white">
+    <div className="min-h-screen bg-transparent relative overflow-hidden flex flex-col selection:bg-[#8B0000] selection:text-white">
       <Navbar />
       
       {/* Immersive Background */}
@@ -80,9 +80,9 @@ const Register = () => {
             opacity: [0.2, 0.4, 0.2] 
           }}
           transition={{ duration: 15, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#7B1FA2]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" 
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#8B0000]/12 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" 
         />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#4A148C]/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#722F37]/8 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
       <main className="flex-grow flex items-center justify-center p-4 relative z-10">
@@ -95,12 +95,12 @@ const Register = () => {
             className="hidden lg:block space-y-12"
           >
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 bg-[#7B1FA2]/20 px-4 py-2 rounded-full border border-[#7B1FA2]/30 text-[#F9D8C6] text-xs font-black uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 bg-[#8B0000]/15 px-4 py-2 rounded-full border border-white/10 text-[#D4AF37] text-xs font-black uppercase tracking-widest">
                 <Sparkles className="w-4 h-4" /> 加入乡助桥
               </div>
               <h1 className="text-6xl font-black text-white leading-tight">
                 开启您的<br />
-                <span className="bg-gradient-to-r from-[#7B1FA2] to-[#F9D8C6] bg-clip-text text-transparent">公益元宇宙</span>
+                <span className="bg-gradient-to-r from-[#8B0000] to-[#D4AF37] bg-clip-text text-transparent">公益元宇宙</span>
               </h1>
               <p className="text-xl text-[#F3DDE4]/60 font-medium leading-relaxed max-w-md">
                 通过游戏化的方式参与乡村振兴，让每一份爱心都能被看见、被记录、被奖赏。
@@ -110,7 +110,7 @@ const Register = () => {
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5">
-                  <Heart className="w-6 h-6 text-[#7B1FA2]" />
+                  <Heart className="w-6 h-6 text-[#8B0000]" />
                 </div>
                 <h3 className="font-black text-white uppercase tracking-tight">爱心认领</h3>
                 <p className="text-sm text-[#F3DDE4]/40 leading-relaxed">一对一精准匹配，陪伴留守老人与儿童。</p>
@@ -131,7 +131,7 @@ const Register = () => {
             animate={{ scale: 1, opacity: 1 }}
             className="bg-[#1A0707]/60 backdrop-blur-[40px] border border-white/10 rounded-[48px] p-10 md:p-16 shadow-[0_32px_64px_rgba(0,0,0,0.5)] relative overflow-hidden group"
           >
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#7B1FA2] via-[#F9D8C6] to-[#4A148C] group-hover:animate-shimmer" />
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#8B0000] via-[#D4AF37] to-[#722F37] group-hover:animate-shimmer" />
             
             <div className="mb-10 text-center lg:text-left">
               <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-2">注册新账号</h2>
@@ -148,7 +148,7 @@ const Register = () => {
                     required
                     type="text"
                     placeholder="您的昵称"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#8B0000]/40 transition-all font-medium placeholder:text-white/20"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   />
@@ -161,7 +161,7 @@ const Register = () => {
                     required
                     type="email"
                     placeholder="example@mail.com"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#8B0000]/40 transition-all font-medium placeholder:text-white/20"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -176,7 +176,7 @@ const Register = () => {
                   required
                   type="tel"
                   placeholder="138xxxx8888"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#8B0000]/40 transition-all font-medium placeholder:text-white/20"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
@@ -192,7 +192,7 @@ const Register = () => {
                       required
                       type={showPassword ? 'text' : 'password'}
                       placeholder="至少 6 位"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium pr-14 placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#8B0000]/40 transition-all font-medium pr-14 placeholder:text-white/20"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
@@ -213,7 +213,7 @@ const Register = () => {
                     required
                     type={showPassword ? 'text' : 'password'}
                     placeholder="重复输入密码"
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#7B1FA2]/50 transition-all font-medium placeholder:text-white/20"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:ring-2 focus:ring-[#8B0000]/40 transition-all font-medium placeholder:text-white/20"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   />
@@ -236,7 +236,7 @@ const Register = () => {
               <button
                 disabled={loading}
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#7B1FA2] to-[#4A148C] hover:shadow-[0_0_30px_rgba(123,31,162,0.5)] text-white font-black uppercase tracking-[0.2em] py-5 rounded-2xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="w-full bg-gradient-to-r from-[#8B0000] to-[#722F37] hover:shadow-[0_0_30px_rgba(139,0,0,0.5)] text-white font-black uppercase tracking-[0.2em] py-5 rounded-2xl flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed group border border-white/10"
               >
                 {loading ? '正在注册...' : '立即开启志愿之旅'}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
@@ -246,7 +246,7 @@ const Register = () => {
             <div className="mt-8 text-center">
               <p className="text-[#F3DDE4]/30 text-xs font-bold uppercase tracking-widest">
                 已经有账号了？ 
-                <Link to="/login" className="text-[#F9D8C6] hover:text-white transition-colors ml-2">立即登录</Link>
+                <Link to="/login" className="text-[#D4AF37] hover:text-white transition-colors ml-2">立即登录</Link>
               </p>
             </div>
           </motion.div>

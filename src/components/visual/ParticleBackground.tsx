@@ -2,7 +2,23 @@ import React, { useRef, useMemo, useEffect, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const Particles = ({ count = 3000 }) => {
+const THEME = {
+  bg: '#0A0505',
+  primary: '#8B0000',
+  secondary: '#722F37',
+  accent: '#D4AF37',
+} as const;
+
+const resolveParticleCount = () => {
+  if (typeof window === 'undefined') return 2800;
+  const hc = typeof navigator !== 'undefined' ? Number((navigator as any).hardwareConcurrency) : NaN;
+  const dm = typeof navigator !== 'undefined' ? Number((navigator as any).deviceMemory) : NaN;
+  if (Number.isFinite(dm) && dm > 0 && dm <= 4) return 1800;
+  if (Number.isFinite(hc) && hc > 0 && hc <= 4) return 2000;
+  return 3200;
+};
+
+const Particles = ({ count }: { count: number }) => {
   const points = useRef<THREE.Points>(null!);
   const { mouse, viewport } = useThree();
 
@@ -59,9 +75,9 @@ const Particles = ({ count = 3000 }) => {
       </bufferGeometry>
       <pointsMaterial
         size={0.025}
-        color="#7B1FA2"
+        color={THEME.primary}
         transparent
-        opacity={0.4}
+        opacity={0.35}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
       />
@@ -70,18 +86,28 @@ const Particles = ({ count = 3000 }) => {
 };
 
 const ParticleBackground = () => {
+  const reducedMotion = (() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+  })();
+
+  const particleCount = useMemo(() => resolveParticleCount(), []);
+
   return (
     <div className="fixed inset-0 z-0 bg-[#0A0505]">
       {/* 4K Gradient Layer */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(123,31,162,0.15)_0%,_transparent_50%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1A0707]/50 to-[#0A0505]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,_rgba(139,0,0,0.18)_0%,_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(212,175,55,0.10)_0%,_transparent_45%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0505]/40 to-[#0A0505]" />
       
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }} dpr={[1, 2]}>
-        <Suspense fallback={null}>
-          <Particles />
-          <fog attach="fog" args={['#0A0505', 0, 10]} />
-        </Suspense>
-      </Canvas>
+      {!reducedMotion && (
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }} dpr={[1, 2]}>
+          <Suspense fallback={null}>
+            <Particles count={particleCount} />
+            <fog attach="fog" args={[THEME.bg, 0, 10]} />
+          </Suspense>
+        </Canvas>
+      )}
     </div>
   );
 };

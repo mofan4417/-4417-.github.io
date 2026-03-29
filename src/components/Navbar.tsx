@@ -45,8 +45,8 @@ const Navbar = () => {
     }`}>
       <div className="flex items-center gap-4">
         <Link to="/" className="flex items-center gap-4 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#7B1FA2] to-[#4A148C] rounded-2xl flex items-center justify-center text-white font-black text-xs shadow-lg group-hover:scale-110 transition-transform duration-500 border border-white/20">XZQ</div>
-          <span className={`text-2xl font-black tracking-tighter ${isHome ? 'text-white' : 'text-white'} group-hover:bg-gradient-to-r group-hover:from-[#7B1FA2] group-hover:to-[#F9D8C6] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500`}>乡助桥</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-[#8B0000] to-[#722F37] rounded-2xl flex items-center justify-center text-white font-black text-xs shadow-lg group-hover:scale-110 transition-transform duration-500 border border-white/20">XZQ</div>
+          <span className={`text-2xl font-black tracking-tighter ${isHome ? 'text-white' : 'text-white'} group-hover:bg-gradient-to-r group-hover:from-[#8B0000] group-hover:to-[#D4AF37] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500`}>乡助桥</span>
         </Link>
       </div>
 
@@ -55,8 +55,8 @@ const Navbar = () => {
           <Link
             key={link.path}
             to={link.path}
-            className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-[#F9D8C6] ${
-              location.pathname === link.path ? 'text-[#F9D8C6] border-b-2 border-[#7B1FA2] pb-1' : 'text-white/40'
+            className={`text-[11px] font-black uppercase tracking-[0.2em] transition-all hover:text-[#D4AF37] ${
+              location.pathname === link.path ? 'text-[#D4AF37] border-b-2 border-[#8B0000] pb-1' : 'text-white/40'
             }`}
           >
             {link.name}
@@ -89,7 +89,7 @@ const Navbar = () => {
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
-                      i18n.language === lang.code ? 'bg-[#7B1FA2] text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                      i18n.language === lang.code ? 'bg-[#8B0000] text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     <span>{lang.flag}</span>
@@ -103,7 +103,7 @@ const Navbar = () => {
 
         <Link 
           to="/register" 
-          className="bg-gradient-to-r from-[#7B1FA2] to-[#4A148C] hover:shadow-[0_0_20px_rgba(123,31,162,0.4)] text-white font-black px-8 py-3 rounded-full transition-all text-[10px] uppercase tracking-[0.2em] border border-white/10"
+          className="bg-gradient-to-r from-[#8B0000] to-[#722F37] hover:shadow-[0_0_20px_rgba(139,0,0,0.45)] text-white font-black px-8 py-3 rounded-full transition-all text-[10px] uppercase tracking-[0.2em] border border-white/10"
         >
           {t('join_now')}
         </Link>
@@ -128,7 +128,7 @@ const Navbar = () => {
           >
             <div className="flex items-center justify-between mb-16">
               <Link to="/" className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-[#7B1FA2] rounded-2xl flex items-center justify-center text-white font-black text-xs">XZQ</div>
+                <div className="w-10 h-10 bg-[#8B0000] rounded-2xl flex items-center justify-center text-white font-black text-xs">XZQ</div>
                 <span className="text-2xl font-black text-white tracking-tighter">乡助桥</span>
               </Link>
               <button onClick={() => setMobileOpen(false)} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-white">
@@ -142,7 +142,7 @@ const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   className={`text-3xl font-black transition-colors ${
-                    location.pathname === link.path ? 'text-[#7B1FA2]' : 'text-white/40'
+                    location.pathname === link.path ? 'text-[#D4AF37]' : 'text-white/40'
                   }`}
                 >
                   {link.name}
@@ -156,7 +156,7 @@ const Navbar = () => {
                   key={lang.code}
                   onClick={() => changeLanguage(lang.code)}
                   className={`py-4 rounded-2xl border font-black text-xs ${
-                    i18n.language === lang.code ? 'bg-[#7B1FA2] border-[#7B1FA2] text-white' : 'bg-white/5 border-white/10 text-white/40'
+                    i18n.language === lang.code ? 'bg-[#8B0000] border-[#8B0000] text-white' : 'bg-white/5 border-white/10 text-white/40'
                   }`}
                 >
                   {lang.flag} {lang.code.toUpperCase()}

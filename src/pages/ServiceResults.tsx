@@ -5,6 +5,7 @@ import { api } from '../api';
 import { Heart, Clock, MapPin, Quote, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/useGameStore';
+import CoverHero from '../components/visual/CoverHero';
 
 const ServiceResults = () => {
   const { addPoints, unlockAchievement, completeMission } = useGameStore();
@@ -119,53 +120,65 @@ const ServiceResults = () => {
     ];
   })();
 
+  const coverSrc = (() => {
+    const direct = typeof content?.hero_image === 'string' ? content.hero_image.trim() : '';
+    if (direct) return direct;
+    const list = content?.hero_images;
+    if (Array.isArray(list) && list.length > 0 && typeof list[0] === 'string') return list[0].trim();
+    return cases[0]?.image || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1920&auto=format&fit=crop';
+  })();
+
   return (
-    <div className="min-h-screen bg-white text-[#333] font-sans">
+    <div className="min-h-screen bg-transparent text-white font-sans">
       <Navbar />
       
-      <div className="pt-24 pb-32 px-4 md:px-24 max-w-7xl mx-auto">
-        <div className="text-center mb-20 space-y-4">
-          <h2 className="text-5xl font-bold">服务成果</h2>
-          <p className="text-xl text-black/50">用数据和故事记录每一份温暖的传递</p>
-        </div>
+      <CoverHero
+        src={coverSrc}
+        alt="封面图"
+        eyebrow="服务成果"
+        title="服务成果"
+        subtitle="用数据和故事记录每一份温暖的传递"
+      />
+      
+      <div className="pb-32 px-4 md:px-24 max-w-7xl mx-auto -mt-20 relative z-10">
 
         {/* 数据看板 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
-          <div className="bg-[#E84C4C]/5 p-10 rounded-[40px] text-center space-y-4 border border-[#E84C4C]/10 hover:bg-[#E84C4C]/10 transition-all">
-            <div className="w-16 h-16 bg-[#E84C4C] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg">
+          <div className="bg-white/5 backdrop-blur-[40px] p-10 rounded-[40px] text-center space-y-4 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all shadow-[0_32px_64px_rgba(0,0,0,0.5)]">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border border-white/10">
               <Heart className="w-8 h-8" />
             </div>
-            <div className="text-5xl font-black text-[#E84C4C]">{stats.total_served}</div>
-            <p className="text-lg font-bold opacity-60">累计服务人次</p>
+            <div className="text-5xl font-black text-[#D4AF37]">{stats.total_served}</div>
+            <p className="text-lg font-black text-white/40 uppercase tracking-[0.2em]">累计服务人次</p>
           </div>
-          <div className="bg-[#E84C4C]/5 p-10 rounded-[40px] text-center space-y-4 border border-[#E84C4C]/10 hover:bg-[#E84C4C]/10 transition-all">
-            <div className="w-16 h-16 bg-[#E84C4C] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg">
+          <div className="bg-white/5 backdrop-blur-[40px] p-10 rounded-[40px] text-center space-y-4 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all shadow-[0_32px_64px_rgba(0,0,0,0.5)]">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border border-white/10">
               <Clock className="w-8 h-8" />
             </div>
-            <div className="text-5xl font-black text-[#E84C4C]">{stats.total_hours}</div>
-            <p className="text-lg font-bold opacity-60">累计陪伴小时</p>
+            <div className="text-5xl font-black text-[#D4AF37]">{stats.total_hours}</div>
+            <p className="text-lg font-black text-white/40 uppercase tracking-[0.2em]">累计陪伴小时</p>
           </div>
-          <div className="bg-[#E84C4C]/5 p-10 rounded-[40px] text-center space-y-4 border border-[#E84C4C]/10 hover:bg-[#E84C4C]/10 transition-all">
-            <div className="w-16 h-16 bg-[#E84C4C] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg">
+          <div className="bg-white/5 backdrop-blur-[40px] p-10 rounded-[40px] text-center space-y-4 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all shadow-[0_32px_64px_rgba(0,0,0,0.5)]">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border border-white/10">
               <MapPin className="w-8 h-8" />
             </div>
-            <div className="text-5xl font-black text-[#E84C4C]">{stats.total_villages}</div>
-            <p className="text-lg font-bold opacity-60">覆盖乡村数量</p>
+            <div className="text-5xl font-black text-[#D4AF37]">{stats.total_villages}</div>
+            <p className="text-lg font-black text-white/40 uppercase tracking-[0.2em]">覆盖乡村数量</p>
           </div>
         </div>
 
         {/* 成功案例 */}
         <div className="space-y-20 mb-32">
           <h3 className="text-3xl font-bold flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#E84C4C] rounded-full"></div>
+            <div className="w-2 h-8 bg-[#8B0000] rounded-full"></div>
             成功案例分享
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {cases.map((item, index) => (
               <div key={index} className="flex flex-col gap-8 group">
-                <div className="aspect-[16/9] rounded-[40px] overflow-hidden shadow-2xl relative">
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-                  <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-6 py-2 rounded-full text-sm font-bold text-[#E84C4C] shadow-lg">
+                <div className="aspect-[16/9] rounded-[40px] overflow-hidden shadow-2xl relative border border-white/10 bg-white/5">
+                  <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+                  <div className="absolute top-6 left-6 bg-[#0A0505]/60 backdrop-blur-md px-6 py-2 rounded-full text-sm font-black text-[#D4AF37] shadow-lg border border-white/10">
                     {item.type}
                   </div>
                 </div>
@@ -173,12 +186,12 @@ const ServiceResults = () => {
                   <h4 className="text-2xl font-bold">{item.title}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <p className="text-xs font-bold text-black/40 uppercase tracking-widest">服务前</p>
-                      <p className="text-sm opacity-60 leading-relaxed">{item.before}</p>
+                      <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">服务前</p>
+                      <p className="text-sm text-white/50 leading-relaxed">{item.before}</p>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-xs font-bold text-[#E84C4C] uppercase tracking-widest">服务后</p>
-                      <p className="text-sm font-bold text-[#E84C4C]/80 leading-relaxed">{item.after}</p>
+                      <p className="text-xs font-black text-[#D4AF37] uppercase tracking-[0.2em]">服务后</p>
+                      <p className="text-sm font-bold text-[#D4AF37]/80 leading-relaxed">{item.after}</p>
                     </div>
                   </div>
                 </div>
@@ -190,13 +203,13 @@ const ServiceResults = () => {
         {/* 照片墙 */}
         <div className="space-y-16 mb-32">
           <h3 className="text-3xl font-bold flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#E84C4C] rounded-full"></div>
+            <div className="w-2 h-8 bg-[#8B0000] rounded-full"></div>
             服务瞬间
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {photos.map((photo, index) => (
-              <div key={index} className="aspect-square rounded-3xl overflow-hidden shadow-xl border border-black/5 group cursor-pointer">
-                <img src={photo} alt={`服务瞬间 ${index + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div key={index} className="aspect-square rounded-3xl overflow-hidden shadow-xl border border-white/10 bg-white/5 group cursor-pointer">
+                <img src={photo} alt={`服务瞬间 ${index + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
             ))}
           </div>
@@ -205,23 +218,23 @@ const ServiceResults = () => {
         {/* 志愿者感言 */}
         <div className="space-y-16">
           <h3 className="text-3xl font-bold flex items-center gap-4">
-            <div className="w-2 h-8 bg-[#E84C4C] rounded-full"></div>
+            <div className="w-2 h-8 bg-[#8B0000] rounded-full"></div>
             志愿者感言
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {testimonials.map((item, index) => (
-              <div key={index} className="bg-black/5 p-12 rounded-[48px] relative group hover:bg-[#E84C4C]/5 transition-all">
-                <Quote className="absolute top-10 right-10 w-12 h-12 text-[#E84C4C]/10 group-hover:text-[#E84C4C]/20 transition-colors" />
-                <p className="text-xl italic leading-relaxed mb-8 opacity-70">
+              <div key={index} className="bg-white/5 backdrop-blur-[40px] p-12 rounded-[48px] relative group hover:bg-white/10 transition-all border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.5)]">
+                <Quote className="absolute top-10 right-10 w-12 h-12 text-[#8B0000]/20 group-hover:text-[#D4AF37]/25 transition-colors" />
+                <p className="text-xl italic leading-relaxed mb-8 text-white/70">
                   “{item.content}”
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#E84C4C] text-white rounded-2xl flex items-center justify-center font-bold text-xl">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#8B0000] to-[#722F37] text-white rounded-2xl flex items-center justify-center font-black text-xl border border-white/10">
                     {item.name[0]}
                   </div>
                   <div>
                     <div className="font-bold">{item.name}</div>
-                    <div className="text-sm opacity-40">{item.major}</div>
+                    <div className="text-sm text-white/40">{item.major}</div>
                   </div>
                 </div>
               </div>

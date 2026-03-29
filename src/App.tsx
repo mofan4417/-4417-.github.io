@@ -11,6 +11,7 @@ import SubmitObject from "./pages/SubmitObject";
 import Register from "./pages/Register";
 import GameStats from "./components/gamification/GameStats";
 import GameNotification from "./components/gamification/GameNotification";
+import ParticleBackground from "./components/visual/ParticleBackground";
 
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
@@ -25,6 +26,7 @@ export default function App() {
 
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <ParticleBackground />
       <GameStats />
       <GameNotification />
       <Routes>
