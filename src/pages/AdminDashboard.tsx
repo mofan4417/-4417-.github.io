@@ -9,10 +9,12 @@ import {
 import { supabase } from '../lib/supabase';
 import { api } from '../api';
 import { ServiceObject } from './ServiceObjects';
+import ReactECharts from 'echarts-for-react';
+import * as echarts from 'echarts';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'applications' | 'requests' | 'objects' | 'settings' | 'content'>('applications');
+  const [activeTab, setActiveTab] = useState<'applications' | 'requests' | 'objects' | 'settings' | 'content' | 'stats'>('applications');
   const [applications, setApplications] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [objects, setObjects] = useState<ServiceObject[]>([]);
@@ -586,6 +588,14 @@ const AdminDashboard = () => {
             }`}
           >
             <LayoutDashboard className="w-6 h-6" /> 内容编辑
+          </button>
+          <button
+            onClick={() => setActiveTab('stats')}
+            className={`flex items-center gap-4 px-6 py-5 rounded-2xl transition-all font-bold ${
+              activeTab === 'stats' ? 'bg-[#F9D8C6] text-[#2B0B0B] shadow-xl' : 'text-[#F3DDE4]/40 hover:bg-white/5 hover:text-[#F3DDE4]'
+            }`}
+          >
+            <Zap className="w-6 h-6" /> 数据统计
           </button>
         </nav>
 
@@ -2076,6 +2086,126 @@ const AdminDashboard = () => {
               </button>
             </div>
           </form>
+        )}
+
+        {activeTab === 'stats' && (
+          <div className="space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Registration Trend */}
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm">
+                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <RefreshCcw className="w-5 h-5 text-[#F9D8C6]" />
+                  用户注册增长趋势 (最近7天)
+                </h3>
+                <ReactECharts
+                  option={{
+                    backgroundColor: 'transparent',
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                      type: 'category',
+                      data: ['3.23', '3.24', '3.25', '3.26', '3.27', '3.28', '3.29'],
+                      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+                      axisLabel: { color: 'rgba(255,255,255,0.4)' }
+                    },
+                    yAxis: {
+                      type: 'value',
+                      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+                      axisLabel: { color: 'rgba(255,255,255,0.4)' }
+                    },
+                    series: [{
+                      data: [12, 19, 15, 25, 32, 28, 45],
+                      type: 'line',
+                      smooth: true,
+                      color: '#E84C4C',
+                      areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                          { offset: 0, color: 'rgba(232,76,76,0.3)' },
+                          { offset: 1, color: 'rgba(232,76,76,0)' }
+                        ])
+                      }
+                    }]
+                  }}
+                  style={{ height: '300px' }}
+                />
+              </div>
+
+              {/* Level Distribution */}
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm">
+                <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                  <Trophy className="w-5 h-5 text-[#F9D8C6]" />
+                  志愿者等级分布 (1-9级)
+                </h3>
+                <ReactECharts
+                  option={{
+                    backgroundColor: 'transparent',
+                    tooltip: { trigger: 'item' },
+                    series: [{
+                      name: '等级分布',
+                      type: 'pie',
+                      radius: ['40%', '70%'],
+                      avoidLabelOverlap: false,
+                      itemStyle: { borderRadius: 10, borderColor: '#2B0B0B', borderWidth: 2 },
+                      label: { show: false },
+                      emphasis: { label: { show: true, fontSize: '14', fontWeight: 'bold', color: '#fff' } },
+                      data: [
+                        { value: 120, name: 'LV.1 萤火', itemStyle: { color: '#94a3b8' } },
+                        { value: 80, name: 'LV.2 溪涧', itemStyle: { color: '#7dd3fc' } },
+                        { value: 45, name: 'LV.3 晨曦', itemStyle: { color: '#fbbf24' } },
+                        { value: 30, name: 'LV.4 星河', itemStyle: { color: '#818cf8' } },
+                        { value: 15, name: 'LV.5 月辉', itemStyle: { color: '#34d399' } },
+                        { value: 8, name: 'LV.6 暖阳', itemStyle: { color: '#f59e0b' } },
+                        { value: 5, name: 'LV.7 炽焰', itemStyle: { color: '#f43f5e' } },
+                        { value: 3, name: 'LV.8 极光', itemStyle: { color: '#22d3ee' } },
+                        { value: 1, name: 'LV.9 永恒', itemStyle: { color: '#fbbf24' } },
+                      ]
+                    }]
+                  }}
+                  style={{ height: '300px' }}
+                />
+              </div>
+            </div>
+
+            {/* Timeline & Export */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-10 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-10">
+                <h3 className="text-2xl font-bold flex items-center gap-3">
+                  <ClipboardList className="w-6 h-6 text-[#F9D8C6]" />
+                  最近升级记录时间轴
+                </h3>
+                <div className="flex gap-4">
+                  <button className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <Upload className="w-4 h-4" /> 导出 PDF 报表
+                  </button>
+                  <button className="px-6 py-3 bg-[#F9D8C6] text-[#2B0B0B] rounded-xl hover:bg-white transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    <Save className="w-4 h-4" /> 导出 Excel
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-6 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-px before:bg-white/10">
+                {[
+                  { user: '张三', from: 2, to: 3, time: '10分钟前', title: '晨曦之愿' },
+                  { user: '李四', from: 1, to: 2, time: '25分钟前', title: '溪涧微光' },
+                  { user: '王五', from: 4, to: 5, time: '1小时前', title: '月辉信使' },
+                  { user: '赵六', from: 8, to: 9, time: '2小时前', title: '永恒光冕' },
+                ].map((log, i) => (
+                  <div key={i} className="flex items-start gap-8 relative">
+                    <div className="w-10 h-10 rounded-full bg-[#2B0B0B] border-2 border-[#E84C4C] flex items-center justify-center z-10 shrink-0">
+                      <Zap className="w-4 h-4 text-[#E84C4C]" />
+                    </div>
+                    <div className="flex-1 bg-white/5 p-6 rounded-2xl border border-white/5 flex items-center justify-between">
+                      <div>
+                        <span className="font-bold text-[#F9D8C6]">{log.user}</span>
+                        <span className="text-white/40 mx-2 text-sm">成功从 LV.{log.from} 晋升至</span>
+                        <span className="font-black text-white uppercase tracking-widest">LV.{log.to} {log.title}</span>
+                      </div>
+                      <span className="text-xs font-medium text-white/20 uppercase tracking-widest">{log.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
       </main>
     </div>

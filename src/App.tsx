@@ -8,6 +8,7 @@ import AboutUs from "./pages/AboutUs";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import SubmitObject from "./pages/SubmitObject";
+import Register from "./pages/Register";
 import GameStats from "./components/gamification/GameStats";
 import GameNotification from "./components/gamification/GameNotification";
 
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/submit-object" element={<SubmitObject />} />
       </Routes>
     </BrowserRouter>

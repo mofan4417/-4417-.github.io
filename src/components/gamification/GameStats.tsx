@@ -3,8 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/useGameStore';
 import { Trophy, Star, Zap, Target } from 'lucide-react';
 
+import { LEVEL_HIERARCHY } from '../../store/useGameStore';
+
 const GameStats = () => {
   const { points, level, xp, xpToNextLevel, achievements } = useGameStore();
+  const currentLevelInfo = LEVEL_HIERARCHY[level] || LEVEL_HIERARCHY[1];
   const progress = (xp / xpToNextLevel) * 100;
   const unlockedCount = achievements.filter(a => a.unlocked).length;
 
@@ -18,16 +21,23 @@ const GameStats = () => {
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#F9D8C6] text-[#2B0B0B] rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
-              {level}
-            </div>
+            <motion.div 
+              animate={currentLevelInfo.effect ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className={`w-12 h-12 bg-gradient-to-br ${currentLevelInfo.color} text-[#2B0B0B] rounded-xl flex items-center justify-center font-black text-2xl shadow-lg relative overflow-hidden`}
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+              <span className="relative z-10">{currentLevelInfo.badge}</span>
+            </motion.div>
             <div>
-              <div className="text-xs text-[#F3DDE4]/40 uppercase tracking-widest font-bold">等级</div>
-              <div className="text-sm font-bold text-[#F9D8C6]">中级志愿者</div>
+              <div className="text-[10px] text-[#F3DDE4]/40 uppercase tracking-widest font-bold">LV.{level}</div>
+              <div className={`text-sm font-black bg-gradient-to-r ${currentLevelInfo.color} bg-clip-text text-transparent`}>
+                {currentLevelInfo.title}
+              </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-[#F3DDE4]/40 uppercase tracking-widest font-bold">积分</div>
+            <div className="text-[10px] text-[#F3DDE4]/40 uppercase tracking-widest font-bold">积分</div>
             <div className="text-xl font-black text-white">{points}</div>
           </div>
         </div>
